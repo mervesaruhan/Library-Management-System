@@ -1,6 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.model.enums;
 
-public enum RoleEnum {
-    LIBRARIAN,
-    PATRON
+public enum AvailabilityEnum {
+    AVAILABLE,
+    UNAVAILABLE
+
 }
