@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "BOOKS")
-@ToString
+@ToString(exclude = "borrowedList" )
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book")
@@ -56,6 +56,6 @@ public class Book {
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<Borrowing> borrowingList = new ArrayList<>();
+    private List<Borrowing> borrowedList = new ArrayList<>();
 
 }
