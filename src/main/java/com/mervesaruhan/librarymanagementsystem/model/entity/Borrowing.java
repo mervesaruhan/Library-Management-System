@@ -28,7 +28,8 @@ public class Borrowing {
     private LocalDate dueDate;
 
     @Column(name = "RETURN_DATE")
-    private LocalDate returnDate;
+    @Builder.Default
+    private LocalDate returnDate = null;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

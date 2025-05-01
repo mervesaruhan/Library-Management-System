@@ -10,13 +10,13 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BorrowingMapper {
 
     Borrowing toEntity(BorrowingSaveRequestDto borrowingSaveRequestDto);
 
-    @Mapping(target = "userFullName", expression = "java(borrowing.getUser().getName() + \\\" \\\" + borrowing.getUser().getSurname())" )
-    @Mapping(target ="bookTitle", expression = "java(borrowing.getBook().getTitle())")
+    @Mapping(target = "userFullName", expression = "java(borrowing.getUser().getName() + \" \" + borrowing.getUser().getSurname())")
+    @Mapping(target = "bookTitle", expression = "java(borrowing.getBook().getTitle())")
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "bookId", source = "book.id")
     BorrowingDto toBorrowingDto(Borrowing borrowing);

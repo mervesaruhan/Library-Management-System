@@ -48,8 +48,9 @@ public class Book {
     @Column(name ="PAGE_COUNT")
     private Integer pageCount;
 
-    @Column(name="INVENTORY_COUNT",nullable = false)
-    private Integer inventoryCount;
+    @Column(name="INVENTORY_COUNT")
+    @Builder.Default
+    private Integer inventoryCount= 0;
 
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

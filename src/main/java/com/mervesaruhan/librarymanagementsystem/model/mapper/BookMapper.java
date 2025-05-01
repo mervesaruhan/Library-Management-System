@@ -14,9 +14,10 @@ import java.util.List;
 @Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BookMapper {
 
-    @Mapping(target = "available", expression = "java(book.getInventoryCount() != null && book.getInventoryCount() > 0)")
+
     Book toBookEntity(BookSaveRequestDto bookSaveRequestDto);
 
+    @Mapping(target = "available", expression = "java(book.getInventoryCount() != null && book.getInventoryCount() > 0)")
     BookDto toBookDto(Book book);
 
     List<BookDto> toBookDtoList(List<Book> books);
