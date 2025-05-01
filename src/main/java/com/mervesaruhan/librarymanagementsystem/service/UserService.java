@@ -6,6 +6,7 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPass
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.User;
+import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.UserMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -102,6 +103,9 @@ public class UserService {
     public UserDto updateUserActiveStatus(Long id, Boolean active){
         User user = userRepository.findById(id)
                 .orElseThrow(()-> new EntityNotFoundException("ID " + id + " ile kullanıcı bulunamadı."));
+        if (user.getRole()== RoleEnum.LIBRARIAN && !active){
+            throw  new IllegalArgumentException("LIBRARIAN passive olamaz.");
+        }
         user.setActive(active);
 
         userRepository.save(user);

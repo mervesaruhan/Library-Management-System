@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserMapper {
 
     @Mapping(target = "fullName", expression = "java(user.getName() + \" \" + user.getSurname())")
-    @Mapping(target = "borrowedBooks", source = "borrowingList")
+    @Mapping(target = "borrowedList", source = "borrowedList")
     UserDto toUserDto(User user);
 
     User toEntity(UserSaveRequestDto userSaveRequestDto);

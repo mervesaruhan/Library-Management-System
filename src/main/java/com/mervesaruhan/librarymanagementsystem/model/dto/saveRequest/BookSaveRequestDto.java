@@ -1,10 +1,6 @@
 package com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest;
 
-import com.mervesaruhan.librarymanagementsystem.model.enums.AvailabilityEnum;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -37,10 +33,13 @@ public record BookSaveRequestDto(
         String description,
 
         @NotNull(message =  "Sayfa sayısı boş olamaz.")
-        Integer pagecount,
+        @Positive(message =  "Sayfa sayısı sıfırdan büyük olmalı.")
+        Integer pageCount,
 
-        @NotNull(message =  "Müsaitlik durumu boş olamaz.")
-        AvailabilityEnum availability
+        @NotNull(message =  "Envanter bilgisi boş olamaz.")
+        @Min(value = 0, message = "Envanter değeri sıfıra esit ya da büyük olmalı")
+        Integer inventoryCount
+
 
 ) {
 }

@@ -4,6 +4,7 @@ package com.mervesaruhan.librarymanagementsystem.controller;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
+import com.mervesaruhan.librarymanagementsystem.model.enums.BookSearchField;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
 import com.mervesaruhan.librarymanagementsystem.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,9 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@Tag(name = "Library Management System", description = "Book CRUD işlemleri")
+@Tag(name = "Book Management", description = "Book CRUD işlemleri")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -51,8 +50,20 @@ public class BookController {
 
     @GetMapping("/search/filter")
     @Operation(summary = "search for a book containing the selected field and the keyword")
-    public ResponseEntity<RestResponse<Page<BookDto>>> searchBooks(@RequestParam String keyword, @RequestParam Pageable pageable, @RequestParam String field){
+    public ResponseEntity<RestResponse<Page<BookDto>>> searchBooks(@RequestParam String keyword, @Parameter(hidden = true) Pageable pageable, @RequestParam BookSearchField field){
         return ResponseEntity.ok(RestResponse.of(bookService.searchBooks(keyword, pageable, field)));
+    }
+
+    @GetMapping("/availability")
+    @Operation(summary = "Get books by Inventory count to see availability")
+    public ResponseEntity<RestResponse<Page<BookDto>>> getBooksByAvailability(@Parameter(hidden = true) Pageable pageable, int count) {
+        return ResponseEntity.ok(RestResponse.of(bookService.getBooksByAvailability(count, pageable)));
+    }
+
+    @PutMapping("/{id}/inventoryCount/{count}")
+    @Operation(summary = "updating book inventory count")
+    public ResponseEntity<RestResponse<BookDto>> updateBookInventoryCount( @PathVariable @NotNull Long id, @PathVariable @NotNull Integer count) {
+        return ResponseEntity.ok(RestResponse.of(bookService.updateInventory(id, count)));
     }
 
     @PutMapping("/{id}")

@@ -2,12 +2,10 @@ package com.mervesaruhan.librarymanagementsystem.model.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.mervesaruhan.librarymanagementsystem.model.enums.AvailabilityEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +48,13 @@ public class Book {
     @Column(name ="PAGE_COUNT")
     private Integer pageCount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name ="AVAILABILITY" , nullable = false)
-    private AvailabilityEnum availability;
+    @Column(name="INVENTORY_COUNT",nullable = false)
+    private Integer inventoryCount;
+
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Borrowing> borrowedList = new ArrayList<>();
+
 
 }

@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Library Management System", description = "User CRUD işlemleri")
+@Tag(name = "User Management", description = "User CRUD işlemleri")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
