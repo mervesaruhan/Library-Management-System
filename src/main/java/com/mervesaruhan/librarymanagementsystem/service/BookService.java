@@ -5,9 +5,9 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRe
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Book;
 import com.mervesaruhan.librarymanagementsystem.model.enums.BookSearchField;
+import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.BookMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +25,7 @@ public class BookService {
 
         // ISBN benzersizlik kontrolü
         if (bookRepository.existsByIsbn(saveRequestDto.isbn())) {
-            throw new IllegalArgumentException("Bu ISBN numarasıyla zaten bir kitap kayıtlı.");
+            throw new IllegalArgumentException("This ISBN number is already associated with a registered book.");
         }
 
         Book book = bookMapper.toBookEntity(saveRequestDto);
@@ -44,7 +44,7 @@ public class BookService {
 
     public BookDto findById(Long id){
         return bookRepository.findById(id).map(bookMapper::toBookDto)
-                .orElseThrow(() -> new EntityNotFoundException("Girilen id'de kitap nulunamdı. id: " + id));
+                .orElseThrow(() -> new InvalidBookIdException(id));
     }
 
 
@@ -56,6 +56,10 @@ public class BookService {
             case GENRE -> bookRepository.findByGenreContainingIgnoreCase(keyword, pageable);
         };
 
+        if (books.isEmpty()) {
+            throw new IllegalArgumentException("No books found for the given keyword: " + keyword);
+        }
+
         return books.map(bookMapper::toBookDto);
     }
 
@@ -63,11 +67,11 @@ public class BookService {
 
     public BookDto updateBook(BookUpdateRequestDto updateRequestDto, Long id){
         Book book= bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Girilen id'de kitap bulunamadı. id:" + id));
+                .orElseThrow(() -> new InvalidBookIdException(id));
 
         //Başka bir kitapta bu isbn var mı kontrolü
         if (bookRepository.existsByIsbnAndIdNot(updateRequestDto.isbn(), id)) {
-            throw new IllegalArgumentException("Bu ISBN numarasıyla başka bir kitap zaten kayıtlı.");
+            throw new IllegalArgumentException("This ISBN number is already associated with a registered book.");
         }
 
         book.setIsbn(updateRequestDto.isbn());
@@ -88,7 +92,7 @@ public class BookService {
 
     public BookDto updateInventory(Long id, int inventoryCount){
         Book book = bookRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Girilen id'de kitap bulunamadı. id:" + id));
+                .orElseThrow(() -> new InvalidBookIdException(id));
         book.setInventoryCount(inventoryCount);
         bookRepository.save(book);
         return bookMapper.toBookDto(book);
@@ -103,7 +107,7 @@ public class BookService {
 
     public void deleteBook(Long id){
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Girilen id'de kitap bulunamadı. id: " + id));
+                .orElseThrow(() -> new InvalidBookIdException(id));
         bookRepository.delete(book);
     }
 

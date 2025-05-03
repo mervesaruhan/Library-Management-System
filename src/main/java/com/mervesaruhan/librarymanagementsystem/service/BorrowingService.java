@@ -6,7 +6,8 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BorrowingS
 import com.mervesaruhan.librarymanagementsystem.model.entity.Book;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Borrowing;
 import com.mervesaruhan.librarymanagementsystem.model.entity.User;
-import com.mervesaruhan.librarymanagementsystem.model.enums.BorrowingStatusEnum;
+import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
+import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.BorrowingMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
 import com.mervesaruhan.librarymanagementsystem.repository.BorrowingRepository;
@@ -35,17 +36,17 @@ public class BorrowingService {
 
         //Kullanıcı  ve kitap kontrolü: sistemde böyle bir kullanıcı/kitap var mı ? Varsa active/ envanteri yeterli  durumda mı?
         User user = userRepository.findById(saveRequestDto.userId())
-                .orElseThrow(() -> new IllegalArgumentException("Girilen ID'de kullanıcı yoktur."));
+                .orElseThrow(() -> new InvalidUserIdException(saveRequestDto.userId()));
 
         Book book = bookRepository.findById(saveRequestDto.bookId())
-                .orElseThrow(() -> new IllegalArgumentException("Girilen ID'de kitap yoktur."));
+                .orElseThrow(() -> new InvalidBookIdException(saveRequestDto.bookId()));
 
         if (!user.getActive()) {
-            throw new IllegalArgumentException("Kullanıcı pasif durumdadır.");
+            throw new IllegalArgumentException("The user is currently inactive.");
         }
 
         if (book.getInventoryCount() == null || book.getInventoryCount() <= 0) {
-            throw new IllegalArgumentException("Kitap envanteri yetersiz.");
+            throw new IllegalArgumentException("Book stock is insufficient.");
         }
 
         // borrowing oluşturma
@@ -70,10 +71,10 @@ public class BorrowingService {
 
     public BorrowingDto returnBook(Long borrowingId){
         Borrowing borrowing = borrowingRepository.findById(borrowingId)
-                .orElseThrow(() -> new EntityNotFoundException("Girilen id'ye ait ödünç alma yoktur. ID: " + borrowingId));
+                .orElseThrow(() -> new EntityNotFoundException("There is no borrowing record for the given  ID: " + borrowingId));
 
         if (borrowing.getStatus() == RETURNED) {
-            throw new IllegalStateException("Bu kitap zaten iade edilmiş.");
+            throw new IllegalStateException("This book has already been returned.");
         }
         borrowing.setStatus(RETURNED);
         borrowing.setReturnDate(LocalDate.now());
@@ -91,7 +92,7 @@ public class BorrowingService {
     public List<BorrowingDto> getBorrowingHistoryByUser(Long userId){
 
         if(!userRepository.existsById(userId)){
-            throw  new EntityNotFoundException("ID " + userId + " ile kullanıcı bulunamadı.");
+            throw  new InvalidUserIdException(userId);
         }
         List<Borrowing> borrowingList = borrowingRepository.findAllByUserId(userId);
         return borrowingMapper.toBorrowingDtoList(borrowingList);
