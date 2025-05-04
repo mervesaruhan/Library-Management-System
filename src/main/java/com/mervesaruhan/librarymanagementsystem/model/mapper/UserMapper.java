@@ -2,6 +2,7 @@ package com.mervesaruhan.librarymanagementsystem.model.mapper;
 
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowedBookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
+import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestByPatronDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Borrowing;
 import com.mervesaruhan.librarymanagementsystem.model.entity.User;
@@ -18,7 +19,12 @@ public interface UserMapper {
     @Mapping(target = "borrowedList", source = "borrowedList")
     UserDto toUserDto(User user);
 
+    @Mapping(target = "active", constant = "true")
     User toEntity(UserSaveRequestDto userSaveRequestDto);
+
+    @Mapping(target = "role", expression = "java(RoleEnum.PATRON)")
+    @Mapping(target = "active", constant = "true")
+    User toEntityWithPatron(UserSaveRequestByPatronDto userSaveRequestByPatronDto);
 
     List<UserDto> toUserDtoList(List<User> users);
 

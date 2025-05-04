@@ -17,10 +17,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Book Management", description = "Book CRUD işlemleri")
+@Tag(name = "Book Management", description = "Book CRUD Operations")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
     @Operation(summary = "Save book")
     public ResponseEntity<RestResponse<BookDto>> saveBook(@RequestBody @Valid BookSaveRequestDto bookSaveRequestDto) {
@@ -36,42 +38,52 @@ public class BookController {
     }
 
 
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping
     @Operation(summary = "Get all books with pagination")
     public ResponseEntity<RestResponse<Page<BookDto>>> getAllBooks(@Parameter(hidden = true) Pageable pageable) {
         return ResponseEntity.ok(RestResponse.of(bookService.findAllBooks(pageable)));
     }
 
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping("/{id}")
     @Operation(summary = "Get book by using id")
     public ResponseEntity<RestResponse<BookDto>> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(RestResponse.of(bookService.findById(id)));
     }
 
+
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping("/search/filter")
     @Operation(summary = "search for a book containing the selected field and the keyword")
     public ResponseEntity<RestResponse<Page<BookDto>>> searchBooks(@RequestParam String keyword, @Parameter(hidden = true) Pageable pageable, @RequestParam BookSearchField field){
         return ResponseEntity.ok(RestResponse.of(bookService.searchBooks(keyword, pageable, field)));
     }
 
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping("/availability")
     @Operation(summary = "Get books by Inventory count to see availability")
     public ResponseEntity<RestResponse<Page<BookDto>>> getBooksByAvailability(@Parameter(hidden = true) Pageable pageable, int count) {
         return ResponseEntity.ok(RestResponse.of(bookService.getBooksByAvailability(count, pageable)));
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PutMapping("/{id}/inventoryCount/{count}")
     @Operation(summary = "updating book inventory count")
     public ResponseEntity<RestResponse<BookDto>> updateBookInventoryCount( @PathVariable @NotNull Long id, @PathVariable @NotNull Integer count) {
         return ResponseEntity.ok(RestResponse.of(bookService.updateInventory(id, count)));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PutMapping("/{id}")
     @Operation(summary = "update book by id")
     public ResponseEntity<RestResponse<BookDto>> updateBook(@RequestBody @Valid BookUpdateRequestDto bookUpdateRequestDto, @PathVariable @NotNull Long id) {
         return ResponseEntity.ok(RestResponse.of(bookService.updateBook(bookUpdateRequestDto,id)));
     }
 
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete book by using id")
     public ResponseEntity<RestResponse<Void>> deleteBook(@PathVariable @NotNull Long id) {

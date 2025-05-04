@@ -14,9 +14,12 @@ import com.mervesaruhan.librarymanagementsystem.repository.BorrowingRepository;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.mervesaruhan.librarymanagementsystem.model.enums.BorrowingStatusEnum.*;
@@ -49,7 +52,7 @@ public class BorrowingService {
             throw new IllegalArgumentException("Book stock is insufficient.");
         }
 
-        // borrowing oluşturma
+        // borrowing oluşturma(ödünç alma tarihi ve teslim tarihi oluşturulur)
         Borrowing borrowing = new Borrowing();
         borrowing.setBook(book);
         borrowing.setUser(user);
@@ -89,12 +92,10 @@ public class BorrowingService {
     }
 
 
-    public List<BorrowingDto> getBorrowingHistoryByUser(Long userId){
+    public List<BorrowingDto> getMyBorrowingHistory() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if(!userRepository.existsById(userId)){
-            throw  new InvalidUserIdException(userId);
-        }
-        List<Borrowing> borrowingList = borrowingRepository.findAllByUserId(userId);
+        List<Borrowing> borrowingList = borrowingRepository.findAllByUserUsername(username);
         return borrowingMapper.toBorrowingDtoList(borrowingList);
     }
 
@@ -120,7 +121,7 @@ public class BorrowingService {
     }
 
 
-    public OverdueReportDto getOverdueReport() {
+    public String generateOverdueReport() {
         List<BorrowingDto> overdueList = getOverdueBorrowings();
 
         int totalBooks = (int) bookRepository.count();
@@ -128,7 +129,32 @@ public class BorrowingService {
         int totalReturned = borrowingRepository.countByStatus(RETURNED);
         int totalOverdue = borrowingRepository.countByStatus(OVERDUE);
 
-        return new OverdueReportDto(totalBooks, totalBorrowed, totalReturned, totalOverdue, overdueList);
+        StringBuilder reportBuilder = new StringBuilder();
+
+        reportBuilder.append("""
+            📚 LIBRARY OVERDUE REPORT
+            --------------------------
+            Total Books        : %d
+            Currently Borrowed : %d
+            Returned           : %d
+            Overdue            : %d
+            """.formatted(totalBooks, totalBorrowed, totalReturned, totalOverdue));
+
+        reportBuilder.append("\n\n Overdue Book Details:\n");
+
+        overdueList.forEach(b -> reportBuilder.append(String.format(
+                " - Book: %s [Book ID: %d] | Borrowed by: %s [User ID: %d] | Due: %s\n",
+                b.bookTitle(),
+                b.bookId(),
+                b.userFullName(),
+                b.userId(),
+                b.dueDate()
+        )));
+
+        reportBuilder.append("\nReport generated at: ")
+                .append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        return reportBuilder.toString();
     }
 
 }

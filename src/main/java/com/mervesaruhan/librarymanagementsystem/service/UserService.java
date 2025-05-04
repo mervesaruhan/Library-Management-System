@@ -1,6 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
+import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestByPatronDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPasswordUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
@@ -32,6 +33,24 @@ public class UserService {
         }
 
         User user = userMapper.toEntity(userSaveRequestDto);
+        user.setActive(true);
+        userRepository.save(user);
+        return userMapper.toUserDto(user);
+
+    }
+
+
+    public UserDto registerUserByPatron(UserSaveRequestByPatronDto patronDto){
+
+        if (userRepository.existsByUsername(patronDto.username())) {
+            throw new IllegalArgumentException("A user with this username already exists. Please create a different username.");
+        }
+
+        if (userRepository.existsByEmail(patronDto.email())) {
+            throw new IllegalArgumentException("This email address is already in use by another user");
+        }
+
+        User user = userMapper.toEntityWithPatron(patronDto);
         user.setActive(true);
         userRepository.save(user);
         return userMapper.toUserDto(user);
@@ -103,9 +122,9 @@ public class UserService {
     public UserDto updateUserActiveStatus(Long id, Boolean active){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new InvalidUserIdException(id));
-        if (user.getRole()== RoleEnum.LIBRARIAN && !active){
-            throw  new IllegalArgumentException("LIBRARIAN cannot be passive");
-        }
+//        if (user.getRole()== RoleEnum.LIBRARIAN && !active){
+//            throw  new IllegalArgumentException("LIBRARIAN cannot be passive");
+//        }
         user.setActive(active);
 
         userRepository.save(user);
