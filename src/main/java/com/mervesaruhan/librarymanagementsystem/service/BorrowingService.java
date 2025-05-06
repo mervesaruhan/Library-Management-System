@@ -1,7 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
+import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.response.OverdueReportDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BorrowingSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Book;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Borrowing;
@@ -14,6 +14,7 @@ import com.mervesaruhan.librarymanagementsystem.repository.BorrowingRepository;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ import static com.mervesaruhan.librarymanagementsystem.model.enums.BorrowingStat
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BorrowingService {
     private final BorrowingRepository borrowingRepository;
     private final BorrowingMapper borrowingMapper;
@@ -33,9 +35,12 @@ public class BorrowingService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final BookService bookService;
+    private final LogHelper logHelper;
 
 
     public BorrowingDto saveBorrowing(BorrowingSaveRequestDto saveRequestDto){
+
+        logHelper.info("Creating borrowing: userId={}, bookId={}", saveRequestDto.userId(), saveRequestDto.bookId());
 
         //Kullanıcı  ve kitap kontrolü: sistemde böyle bir kullanıcı/kitap var mı ? Varsa active/ envanteri yeterli  durumda mı?
         User user = userRepository.findById(saveRequestDto.userId())
@@ -45,10 +50,12 @@ public class BorrowingService {
                 .orElseThrow(() -> new InvalidBookIdException(saveRequestDto.bookId()));
 
         if (!user.getActive()) {
+            logHelper.warn("Inactive user attempted to borrow. userId={}", user.getId());
             throw new IllegalArgumentException("The user is currently inactive.");
         }
 
         if (book.getInventoryCount() == null || book.getInventoryCount() <= 0) {
+            logHelper.warn("Book out of stock. bookId={}", book.getId());
             throw new IllegalArgumentException("Book stock is insufficient.");
         }
 
@@ -67,16 +74,23 @@ public class BorrowingService {
         // borrowing kaydetme
         borrowingRepository.save(borrowing);
 
+        logHelper.info("Borrowing created successfully. borrowingId={}, userId={}, bookId={}", borrowing.getId(),
+                user.getId(), book.getId());
+
         return borrowingMapper.toBorrowingDto(borrowing);
 
     }
 
 
     public BorrowingDto returnBook(Long borrowingId){
+
+        logHelper.info("Return process started. borrowingId={}", borrowingId);
+
         Borrowing borrowing = borrowingRepository.findById(borrowingId)
                 .orElseThrow(() -> new EntityNotFoundException("There is no borrowing record for the given  ID: " + borrowingId));
 
         if (borrowing.getStatus() == RETURNED) {
+            logHelper.warn("Return attempted for already returned book. borrowingId={}", borrowingId);
             throw new IllegalStateException("This book has already been returned.");
         }
         borrowing.setStatus(RETURNED);
@@ -87,13 +101,16 @@ public class BorrowingService {
 
         bookRepository.save(book);
         borrowingRepository.save(borrowing);
+        logHelper.info("Return successful. borrowingId={}", borrowingId);
 
         return borrowingMapper.toBorrowingDto(borrowing);
     }
 
 
     public List<BorrowingDto> getMyBorrowingHistory() {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        logHelper.debug("Fetching borrowing list from DB for username: {}", username);
 
         List<Borrowing> borrowingList = borrowingRepository.findAllByUserUsername(username);
         return borrowingMapper.toBorrowingDtoList(borrowingList);
@@ -101,22 +118,29 @@ public class BorrowingService {
 
 
     public List<BorrowingDto> getAllBorrowingHistory() {
+        logHelper.debug("Retrieving all borrowings from DB");
         List<Borrowing> borrowings = borrowingRepository.findAll();
         return borrowingMapper.toBorrowingDtoList(borrowings);
     }
 
 
     public List<BorrowingDto> getOverdueBorrowings() {
+
+        logHelper.info("Checking for overdue borrowings");
         LocalDate today = LocalDate.now();
 
         List<Borrowing> overdueList = borrowingRepository
                 .findByDueDateBeforeAndStatus(today, BORROWED);
+
+        logHelper.info("Querying borrowings with dueDate < today and status = BORROWED");
 
         // Overdue olanların durumunu güncelle - takip için
         for(Borrowing b : overdueList)
             b.setStatus(OVERDUE);
 
         borrowingRepository.saveAll(overdueList);
+
+        logHelper.info("Found {} overdue borrowings", overdueList.size());
         return borrowingMapper.toBorrowingDtoList(overdueList);
     }
 
@@ -154,6 +178,9 @@ public class BorrowingService {
         reportBuilder.append("\nReport generated at: ")
                 .append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
+        logHelper.info("Overdue report generated at {} with {} records",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                overdueList.size());
         return reportBuilder.toString();
     }
 

@@ -3,6 +3,7 @@ package com.mervesaruhan.librarymanagementsystem.model.exception;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
+import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -17,10 +18,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final LogHelper logHelper;
+
+    public GlobalExceptionHandler(LogHelper logHelper) {
+        this.logHelper = logHelper;
+    }
+
     // Genel iş kuralları için
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<RestResponse<String>> handleBusinessException(BusinessException ex) {
-        log.error("BusinessException occurred: {}", ex.getMessage(), ex);
+        logHelper.error("BusinessException occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(RestResponse.error(null, ex.getMessage()));
     }
@@ -28,14 +35,14 @@ public class GlobalExceptionHandler {
     // Özel custom exception’lar
     @ExceptionHandler(InvalidUserIdException.class)
     public ResponseEntity<RestResponse<String>> handleUserNotFound(InvalidUserIdException ex) {
-        log.warn("InvalidUserIdException occurred: {}", ex.getMessage(), ex);
+        logHelper.warn("InvalidUserIdException occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(RestResponse.error(null, ex.getMessage()));
     }
 
     @ExceptionHandler(InvalidBookIdException.class)
     public ResponseEntity<RestResponse<String>> handleBookNotFound(InvalidBookIdException ex) {
-        log.warn("InvalidBookIdException occurred: {}", ex.getMessage(), ex);
+        logHelper.warn("InvalidBookIdException occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(RestResponse.error(null, ex.getMessage()));
     }
@@ -43,7 +50,7 @@ public class GlobalExceptionHandler {
     // JPA EntityNotFoundException
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<RestResponse<String>> handleEntityNotFoundException(EntityNotFoundException ex) {
-        log.warn("EntityNotFoundException occurred: {}", ex.getMessage(), ex);
+        logHelper.warn("EntityNotFoundException occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(RestResponse.error(null, ex.getMessage()));
     }
@@ -51,7 +58,7 @@ public class GlobalExceptionHandler {
     // Illegal State
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<RestResponse<String>> handleIllegalStateException(IllegalStateException ex) {
-        log.error("IllegalStateException occurred: {}", ex.getMessage(), ex);
+        logHelper.error("IllegalStateException occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(RestResponse.error(null, GeneralErrorMessage.ILLEGAL_STATE.getMessage()));
     }
@@ -59,7 +66,7 @@ public class GlobalExceptionHandler {
     // Illegal Argument
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<RestResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.warn("IllegalArgumentException occurred: {}", ex.getMessage(), ex);
+        logHelper.warn("IllegalArgumentException occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.badRequest()
                 .body(RestResponse.error(null, ErrorMessage.ILLEGAL_ARGUMENT.getMessage()));
     }
@@ -71,7 +78,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .findFirst()
                 .orElse("Geçersiz veri.");
-        log.warn("Validation error occurred: {}", errorMessage);
+        logHelper.warn("Validation error occurred: {}", errorMessage);
 
         return ResponseEntity.badRequest()
                 .body(RestResponse.error(null, errorMessage));
@@ -80,7 +87,7 @@ public class GlobalExceptionHandler {
     // Tüm bilinmeyen hatalar
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RestResponse<String>> handleGenericException(Exception ex) {
-        log.error("Unhandled exception occurred: {}", ex.getMessage(), ex);
+        logHelper.error("Unhandled exception occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(RestResponse.error(null, GeneralErrorMessage.INTERNAL_ERROR.getMessage()));
     }

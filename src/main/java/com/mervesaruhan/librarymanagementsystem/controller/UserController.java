@@ -1,7 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.controller;
 
 
-import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
+import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestByPatronDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
@@ -12,14 +12,10 @@ import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
 import com.mervesaruhan.librarymanagementsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,19 +24,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "User Management", description = "User CRUD işlemleri")
+@Tag(name = "User Management", description = "User CRUD Operations")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Validated
+@Slf4j
 public class UserController {
     private final UserService userService;
+    private final LogHelper logHelper;
 
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
     @Operation(summary = "New user register by librarian")
     public ResponseEntity<RestResponse<UserDto>> registerUserByLibrarian(@Valid @RequestBody UserSaveRequestDto userSaveRequestDto) {
+        logHelper.info("POST /users called by librarian: {}", userSaveRequestDto.username());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(RestResponse.of(userService.registerUser(userSaveRequestDto)));
     }
@@ -51,6 +50,7 @@ public class UserController {
     @Operation(summary = "New user register by patron")
     @PreAuthorize("hasAnyRole('LIBRARIAN','PATRON')")
     public ResponseEntity<RestResponse<UserDto>>  registerUserByPatron(@Valid @RequestBody UserSaveRequestByPatronDto patronRequestDto) {
+        logHelper.info("New patron user registration attemp: {}", patronRequestDto.username());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(RestResponse.of(userService.registerUserByPatron(patronRequestDto)));
     }
@@ -66,6 +66,7 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Get all users with pagination")
     public ResponseEntity<RestResponse<Page<UserDto>>> getAllUsers(@Parameter(hidden = true) Pageable pageable) {
+        logHelper.debug("Fetching all users with pagination: {}", pageable);
         return ResponseEntity.ok(RestResponse.of(userService.findAllUsers(pageable)));
     }
 
@@ -73,6 +74,7 @@ public class UserController {
     @PutMapping("/{id}")
     @Operation(summary = "Update user register information")
     public ResponseEntity<RestResponse<UserDto>> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+        logHelper.info("PUT / Updating user with ID: {}", id);
         return ResponseEntity.ok(RestResponse.of(userService.updateUser(id, userUpdateRequestDto)));
     }
 
@@ -88,6 +90,7 @@ public class UserController {
     @PutMapping("/{id}/role")
     @Operation(summary = "Update user role")
     public ResponseEntity<RestResponse<UserDto>> updateUserRole(@PathVariable Long id, @Valid @RequestBody UserRoleUpdateRequestDto roledUpdateDto) {
+        logHelper.info("PUT / User role update requested for ID: {} to role: {}", id, roledUpdateDto.role());
         return ResponseEntity.ok(RestResponse.of(userService.updateUserRole(id, roledUpdateDto)));
     }
 
@@ -95,6 +98,7 @@ public class UserController {
     @PutMapping("/{id}/status")
     @Operation(summary = "Change user's active status")
     public ResponseEntity<RestResponse<UserDto>> updateUserActiveStatus(@PathVariable Long id, @RequestParam Boolean active){
+        logHelper.info("PUT / User status change requested. ID: {}, Active: {}", id, active);
         return ResponseEntity.ok(RestResponse.of(userService.updateUserActiveStatus(id, active)));
     }
 
@@ -102,6 +106,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete User")
     public ResponseEntity<RestResponse<Void>> deleteUser(@PathVariable Long id) {
+        logHelper.info("DELETE/ Delete user requested for ID: {}", id);
         userService.deleteUser(id);
         return ResponseEntity.ok(RestResponse.empty());
     }
