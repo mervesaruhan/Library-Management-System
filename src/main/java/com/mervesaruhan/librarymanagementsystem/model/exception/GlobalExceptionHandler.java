@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -90,5 +92,21 @@ public class GlobalExceptionHandler {
         logHelper.error("Unhandled exception occurred: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(RestResponse.error(null, GeneralErrorMessage.INTERNAL_ERROR.getMessage()));
+    }
+
+    // Spring Security method-level yetkisizlik (örneğin @PreAuthorize ile)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<RestResponse<String>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        logHelper.warn("AuthorizationDeniedException occurred: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(RestResponse.errorAuth(GeneralErrorMessage.ACCESS_DENIED, HttpStatus.FORBIDDEN));
+    }
+
+    // Diğer AccessDeniedException’lar (özellikle filtre zincirinde gelenler)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<RestResponse<String>> handleAccessDeniedException(AccessDeniedException ex) {
+        logHelper.warn("AccessDeniedException occurred: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(RestResponse.errorAuth(GeneralErrorMessage.ACCESS_DENIED, HttpStatus.FORBIDDEN));
     }
 }

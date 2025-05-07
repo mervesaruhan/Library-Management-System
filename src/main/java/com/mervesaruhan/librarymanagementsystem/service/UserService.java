@@ -1,5 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
+import com.mervesaruhan.librarymanagementsystem.model.entity.Borrowing;
+import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
@@ -16,6 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -123,16 +128,37 @@ public class UserService {
         return userMapper.toUserDto(user);
     }
 
-    public UserDto updateUserActiveStatus(Long id, Boolean active){
+    public UserDto checkUserEligibilityAndUpdateStatus(Long id, Boolean active) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new InvalidUserIdException(id));
-//        if (user.getRole()== RoleEnum.LIBRARIAN && !active){
-//            throw  new IllegalArgumentException("LIBRARIAN cannot be passive");
+
+//        // LIBRARIAN pasif olamaz kuralı
+//        if (user.getRole() == RoleEnum.ROLE_LIBRARIAN && Boolean.FALSE.equals(active)) {
+//            throw new IllegalArgumentException("LIBRARIAN cannot be passive");
 //        }
-        user.setActive(active);
+
+        // Ödünç alınmış kitaplar (return yapılmamış)
+        List<Borrowing> activeBorrowings = user.getBorrowedList().stream()
+                .filter(b -> b.getReturnDate() == null)
+                .toList();
+
+        // Koşul 1: 5'ten fazla aktif kitap varsa
+        boolean hasMoreThanFiveBooks = activeBorrowings.size() >= 5;
+
+        // Koşul 2: En az bir gecikmiş kitap varsa
+        boolean hasOverdue = activeBorrowings.stream()
+                .anyMatch(b -> b.getDueDate().isBefore(LocalDate.now()));
+
+        // Otomatik pasif duruma geçirme
+        if (hasMoreThanFiveBooks || hasOverdue) {
+            user.setActive(false);
+            logHelper.warn("User {} set to passive due to rule violation. More than 5 books or overdue detected.", id);
+        } else {
+            user.setActive(active); // elle güncelleme yapılmışsa sadece geçerli koşullarda uygula
+        }
 
         userRepository.save(user);
-        logHelper.info("User active status updated. ID: {}, active: {}", id, active);
+        logHelper.info("User active status updated. ID: {}, active: {}", id, user.getActive());
         return userMapper.toUserDto(user);
     }
 

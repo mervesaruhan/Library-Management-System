@@ -74,6 +74,9 @@ public class BorrowingService {
         // borrowing kaydetme
         borrowingRepository.save(borrowing);
 
+        // eligibility kontrolü (max 5 kitap veya gecikme kontrolü)
+        userService.checkUserEligibilityAndUpdateStatus(user.getId(), true);
+
         logHelper.info("Borrowing created successfully. borrowingId={}, userId={}, bookId={}", borrowing.getId(),
                 user.getId(), book.getId());
 
