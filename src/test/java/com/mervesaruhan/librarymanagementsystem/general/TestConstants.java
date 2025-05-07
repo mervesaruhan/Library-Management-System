@@ -31,8 +31,8 @@ public class TestConstants {
     public static final String TEST_USER_USERNAME = "Test Username";
     public static final String TEST_USER_PASSWORD = "Test Password";
     public static final String TEST_USER_PASSWORD_NEW = "Test Password New";
-    public static final RoleEnum TEST_ROLE_PATRON = RoleEnum.PATRON;
-    public static final RoleEnum TEST_ROLE_LIBRARIAN = RoleEnum.LIBRARIAN;
+    public static final RoleEnum TEST_ROLE_PATRON = RoleEnum.ROLE_PATRON;
+    public static final RoleEnum TEST_ROLE_LIBRARIAN = RoleEnum.ROLE_LIBRARIAN;
     public static final Boolean TEST_IS_ACTIVE = true;
     public static final Boolean TEST_IS_INACTIVE = false;
 

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserSaveRequestByPatronDto(
+public record RegisterRequestDto(
         @NotBlank(message = "İsim boş olamaz.")
         @Size(min = 2, max = 50, message = "İsim en az 2, en fazla 50 karakter olmalıdır.")
         String name,

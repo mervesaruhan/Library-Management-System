@@ -11,10 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityBeansConfig {
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService(); // class'ını senin yazdığın gibi elle veriyoruz
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -22,10 +18,11 @@ public class SecurityBeansConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
-                                                         PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider authenticationProvider(
+            CustomUserDetailsService customUserDetailsService,
+            PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }

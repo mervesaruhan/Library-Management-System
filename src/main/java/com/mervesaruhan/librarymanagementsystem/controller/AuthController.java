@@ -2,12 +2,12 @@ package com.mervesaruhan.librarymanagementsystem.controller;
 
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.AuthRequest;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.AuthResponse;
+import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.RegisterRequestDto;
+import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
 import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
+import com.mervesaruhan.librarymanagementsystem.service.AuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,27 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final AuthenticationService authenticationService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+    @PostMapping("/register")
+    public ResponseEntity<RestResponse<AuthResponse>> register(@RequestBody RegisterRequestDto request) {
+        return ResponseEntity.ok(RestResponse.of(authenticationService.register(request)));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password())
-        );
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
-        String token = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(token));
+    public ResponseEntity<RestResponse<AuthResponse>> login(@RequestBody AuthRequest request) {
+        return ResponseEntity.ok(RestResponse.of(authenticationService.authenticate(request)));
     }
-
 }
-

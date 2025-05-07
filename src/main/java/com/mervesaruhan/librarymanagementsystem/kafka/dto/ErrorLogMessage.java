@@ -11,10 +11,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KafkaLogMessage {
-    private String level; // INFO, WARN, ERROR
+public class ErrorLogMessage {
     private String message;
-    private String username; // o anda aktif kullanıcı
+    private String username;
     private LocalDateTime timestamp;
-    private String source; // örnek: "BookService", "BorrowingService"
 }

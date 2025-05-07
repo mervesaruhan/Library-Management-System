@@ -27,7 +27,6 @@ import java.util.List;
 @RequestMapping("/api/v1/borrowings")
 public class BorrowingController {
     private final BorrowingService borrowingService;
-    private final LogHelper logHelper;
 
 
 
@@ -35,7 +34,6 @@ public class BorrowingController {
     @PostMapping
     @Operation(summary = "Borrowing operation")
     public  ResponseEntity<RestResponse<BorrowingDto>> saveBorrowing(@Valid @RequestBody BorrowingSaveRequestDto requestDto) {
-        logHelper.info("Borrowing requested by Patron");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(RestResponse.of(borrowingService.saveBorrowing(requestDto)));
     }
@@ -44,7 +42,6 @@ public class BorrowingController {
     @PreAuthorize("hasRole('PATRON')")
     @Operation(summary = "Return operation")
     public ResponseEntity<RestResponse<BorrowingDto>> returnBorrowing(@PathVariable long id) {
-        logHelper.info("Return requested for borrowing ID: {}", id);
         return ResponseEntity.ok(RestResponse.of(borrowingService.returnBook(id)));
     }
 
@@ -53,7 +50,6 @@ public class BorrowingController {
     @PreAuthorize("hasRole('PATRON')")
     @Operation(summary = "Get borrowing history for the logged-in user")
     public ResponseEntity<RestResponse<List<BorrowingDto>>> getMyBorrowingHistory() {
-        logHelper.debug("Fetching borrowing history for current user");
         return ResponseEntity.ok(RestResponse.of(borrowingService.getMyBorrowingHistory()));
     }
 
@@ -62,7 +58,6 @@ public class BorrowingController {
     @GetMapping("/history/all")
     @Operation(summary = "Get all borrowing history (only for librarians)")
     public ResponseEntity<RestResponse<List<BorrowingDto>>> getAllBorrowingHistory() {
-        logHelper.debug("Fetching all borrowing history requested by Librarian");
         return ResponseEntity.ok(RestResponse.of(borrowingService.getAllBorrowingHistory()));
     }
 
@@ -70,7 +65,6 @@ public class BorrowingController {
     @GetMapping("/overdue")
     @Operation(summary = "Get all overdue borrowings")
     public ResponseEntity<RestResponse<List<BorrowingDto>>> getOverdueBorrowings() {
-        logHelper.debug("Fetching overdue borrowings");
         return ResponseEntity.ok(RestResponse.of(borrowingService.getOverdueBorrowings()));
     }
 
@@ -78,7 +72,6 @@ public class BorrowingController {
     @GetMapping("/overdue/report")
     @Operation(summary = "Get detailed overdue report for librarians")
     public ResponseEntity<RestResponse<String>> overdueBorrowingsReport() {
-        logHelper.info("Overdue report generation requested by Librarian");
         return ResponseEntity.ok(RestResponse.of(borrowingService.generateOverdueReport()));
     }
 }

@@ -4,10 +4,7 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowedBookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRequestDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BorrowingSaveRequestDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestByPatronDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
+import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.*;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPasswordUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
@@ -127,8 +124,8 @@ public class TestDataGenerator {
         );
     }
 
-    public static UserSaveRequestByPatronDto createUserSavePatronDto() {
-        return new UserSaveRequestByPatronDto(
+    public static RegisterRequestDto createRegisterRequestDto() {
+        return new RegisterRequestDto(
 
                 TestConstants.TEST_USER_NAME,
                 TestConstants.TEST_USER_SURNAME,
@@ -138,6 +135,15 @@ public class TestDataGenerator {
                 TestConstants.TEST_USER_PASSWORD
         );
     }
+
+    public static AuthRequest createAuthRequest() {
+        return new AuthRequest(
+                TestConstants.TEST_USER_USERNAME,
+                TestConstants.TEST_USER_PASSWORD);
+    }
+
+
+
 
     public static UserUpdateRequestDto userUpdateDto() {
         return new UserUpdateRequestDto(
@@ -167,7 +173,7 @@ public class TestDataGenerator {
         );
     }
 
-    public static User userLibrarian(){
+    public static User createUserLibrarian(){
         User user = new User();
         user.setId(TestConstants.TEST_USER_ID);
         user.setName(TestConstants.TEST_USER_NAME);
@@ -181,7 +187,7 @@ public class TestDataGenerator {
         return user;
     }
 
-    public static User userPatron(){
+    public static User createUserPatron(){
         User user = new User();
         user.setId(TestConstants.TEST_USER_ID);
         user.setName(TestConstants.TEST_USER_NAME);

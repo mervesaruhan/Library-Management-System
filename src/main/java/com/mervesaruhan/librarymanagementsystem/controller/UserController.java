@@ -1,9 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.controller;
 
 
-import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestByPatronDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPasswordUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
@@ -32,28 +30,17 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final LogHelper logHelper;
 
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
     @Operation(summary = "New user register by librarian")
-    public ResponseEntity<RestResponse<UserDto>> registerUserByLibrarian(@Valid @RequestBody UserSaveRequestDto userSaveRequestDto) {
-        logHelper.info("POST /users called by librarian: {}", userSaveRequestDto.username());
+    public ResponseEntity<RestResponse<UserDto>> createUser(@Valid @RequestBody UserSaveRequestDto userSaveRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(RestResponse.of(userService.registerUser(userSaveRequestDto)));
+                .body(RestResponse.of(userService.registerUserByLibrarian(userSaveRequestDto)));
     }
 
 
-
-    @PostMapping("/patronRegister")
-    @Operation(summary = "New user register by patron")
-    @PreAuthorize("hasAnyRole('LIBRARIAN','PATRON')")
-    public ResponseEntity<RestResponse<UserDto>>  registerUserByPatron(@Valid @RequestBody UserSaveRequestByPatronDto patronRequestDto) {
-        logHelper.info("New patron user registration attemp: {}", patronRequestDto.username());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(RestResponse.of(userService.registerUserByPatron(patronRequestDto)));
-    }
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/{id}")
@@ -66,7 +53,6 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Get all users with pagination")
     public ResponseEntity<RestResponse<Page<UserDto>>> getAllUsers(@Parameter(hidden = true) Pageable pageable) {
-        logHelper.debug("Fetching all users with pagination: {}", pageable);
         return ResponseEntity.ok(RestResponse.of(userService.findAllUsers(pageable)));
     }
 
@@ -74,7 +60,6 @@ public class UserController {
     @PutMapping("/{id}")
     @Operation(summary = "Update user register information")
     public ResponseEntity<RestResponse<UserDto>> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
-        logHelper.info("PUT / Updating user with ID: {}", id);
         return ResponseEntity.ok(RestResponse.of(userService.updateUser(id, userUpdateRequestDto)));
     }
 
@@ -90,7 +75,6 @@ public class UserController {
     @PutMapping("/{id}/role")
     @Operation(summary = "Update user role")
     public ResponseEntity<RestResponse<UserDto>> updateUserRole(@PathVariable Long id, @Valid @RequestBody UserRoleUpdateRequestDto roledUpdateDto) {
-        logHelper.info("PUT / User role update requested for ID: {} to role: {}", id, roledUpdateDto.role());
         return ResponseEntity.ok(RestResponse.of(userService.updateUserRole(id, roledUpdateDto)));
     }
 
@@ -98,7 +82,6 @@ public class UserController {
     @PutMapping("/{id}/status")
     @Operation(summary = "Change user's active status")
     public ResponseEntity<RestResponse<UserDto>> updateUserActiveStatus(@PathVariable Long id, @RequestParam Boolean active){
-        logHelper.info("PUT / User status change requested. ID: {}, Active: {}", id, active);
         return ResponseEntity.ok(RestResponse.of(userService.updateUserActiveStatus(id, active)));
     }
 
@@ -106,7 +89,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete User")
     public ResponseEntity<RestResponse<Void>> deleteUser(@PathVariable Long id) {
-        logHelper.info("DELETE/ Delete user requested for ID: {}", id);
         userService.deleteUser(id);
         return ResponseEntity.ok(RestResponse.empty());
     }

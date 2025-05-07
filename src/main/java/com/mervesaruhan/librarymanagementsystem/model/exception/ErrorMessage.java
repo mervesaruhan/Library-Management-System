@@ -10,6 +10,7 @@ public enum ErrorMessage implements BaseErrorMessage {
     USER_STILL_ACTIVE("User cannot be deleted because they are still active."),
     ILLEGAL_ARGUMENT("Invalid argument provided.");
 
+
     private final String message;
 
     ErrorMessage(String message) {

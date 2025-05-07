@@ -2,7 +2,6 @@ package com.mervesaruhan.librarymanagementsystem.service;
 
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
-import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestByPatronDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPasswordUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
@@ -15,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +24,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final LogHelper logHelper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserDto registerUser(UserSaveRequestDto userSaveRequestDto){
+    public UserDto registerUserByLibrarian(UserSaveRequestDto userSaveRequestDto){
 
         if (userRepository.existsByUsername(userSaveRequestDto.username())) {
             logHelper.warn("Username already exists: {}", userSaveRequestDto.username());
@@ -39,33 +40,13 @@ public class UserService {
 
         User user = userMapper.toEntity(userSaveRequestDto);
         user.setActive(true);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         logHelper.info("User registered successfully. ID: {}, username: {}", user.getId(), user.getUsername());
         return userMapper.toUserDto(user);
 
     }
 
-
-    public UserDto registerUserByPatron(UserSaveRequestByPatronDto patronDto){
-
-        if (userRepository.existsByUsername(patronDto.username())) {
-            logHelper.warn("Username already exists for patron: {}", patronDto.username());
-            throw new IllegalArgumentException("A user with this username already exists. Please create a different username.");
-        }
-
-        if (userRepository.existsByEmail(patronDto.email())) {
-            logHelper.warn("Email already exists for patron: {}", patronDto.email());
-            throw new IllegalArgumentException("This email address is already in use by another user");
-        }
-
-        User user = userMapper.toEntityWithPatron(patronDto);
-        user.setActive(true);
-        userRepository.save(user);
-
-        logHelper.info("Patron user registered successfully. ID: {}, username: {}", user.getId(), user.getUsername());
-        return userMapper.toUserDto(user);
-
-    }
 
 
     public UserDto getUserById(Long id){
@@ -124,7 +105,8 @@ public class UserService {
             logHelper.warn("New password matches current password. ID: {}", id);
             throw new IllegalArgumentException("Please choose a new password different from your current one.");
         }
-        user.setPassword(passwordUpdateDto.newPassword());
+        //user.setPassword(passwordUpdateDto.newPassword());
+        user.setPassword(passwordEncoder.encode(passwordUpdateDto.newPassword()));
         userRepository.save(user);
         logHelper.info("Password updated successfully for user ID: {}", id);
         return userMapper.toUserDto(user);
