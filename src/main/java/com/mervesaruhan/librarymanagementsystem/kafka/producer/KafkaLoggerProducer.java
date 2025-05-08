@@ -18,6 +18,12 @@ public class KafkaLoggerProducer {
     private final KafkaTemplate<String, ErrorLogMessage> errorKafkaTemplate;
 
     public void sendRequestLog(RequestLogMessage message) {
+        // Loop'u engelle: Eğer mesaj consumer'dan geliyorsa Kafka'ya tekrar gönderme
+        if ("consumer".equalsIgnoreCase(message.getSource())) {
+            log.debug("Kafka loop prevented for request log: {}", message);
+            return;
+        }
+
         try {
             requestKafkaTemplate.send("requestLog", message);
             log.debug("Request log sent to Kafka → {}", message);
@@ -27,6 +33,12 @@ public class KafkaLoggerProducer {
     }
 
     public void sendErrorLog(ErrorLogMessage message) {
+        // loop engelle
+        if ("consumer".equalsIgnoreCase(message.getSource())) {
+            log.debug("Kafka loop prevented for error log: {}", message);
+            return;
+        }
+
         try {
             errorKafkaTemplate.send("errorLog", message);
             log.debug("Error log sent to Kafka → {}", message);

@@ -1,7 +1,6 @@
-package com.mervesaruhan.librarymanagementsystem.service;
+package com.mervesaruhan.librarymanagementsystem.Tests;
 
 import com.mervesaruhan.librarymanagementsystem.model.entity.Borrowing;
-import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
@@ -132,10 +131,6 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new InvalidUserIdException(id));
 
-//        // LIBRARIAN pasif olamaz kuralı
-//        if (user.getRole() == RoleEnum.ROLE_LIBRARIAN && Boolean.FALSE.equals(active)) {
-//            throw new IllegalArgumentException("LIBRARIAN cannot be passive");
-//        }
 
         // Ödünç alınmış kitaplar (return yapılmamış)
         List<Borrowing> activeBorrowings = user.getBorrowedList().stream()

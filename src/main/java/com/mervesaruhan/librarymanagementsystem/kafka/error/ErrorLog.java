@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "error_logs")
+@Table(name = "Error_Log")
 public class ErrorLog {
 
     @Id
@@ -22,4 +22,5 @@ public class ErrorLog {
     private String message;
 
     private String description;
+
 }

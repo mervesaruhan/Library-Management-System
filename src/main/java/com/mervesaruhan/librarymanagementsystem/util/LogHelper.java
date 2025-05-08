@@ -64,6 +64,7 @@ public class LogHelper {
                 .uri(String.format(format, args))
                 .username(getCurrentUsername())
                 .timestamp(LocalDateTime.now())
+                .source("app")
                 .build();
         kafkaLoggerProducer.sendRequestLog(logMessage);
     }
@@ -73,6 +74,7 @@ public class LogHelper {
                 .message(String.format(format, args))
                 .username(getCurrentUsername())
                 .timestamp(LocalDateTime.now())
+                .source("app")
                 .build();
         kafkaLoggerProducer.sendErrorLog(errorLog);
     }

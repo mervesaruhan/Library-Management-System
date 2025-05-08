@@ -4,8 +4,7 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.AuthReques
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.AuthResponse;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.RegisterRequestDto;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
-import com.mervesaruhan.librarymanagementsystem.service.AuthenticationService;
+import com.mervesaruhan.librarymanagementsystem.Tests.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

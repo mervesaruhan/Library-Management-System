@@ -23,6 +23,8 @@ public class ErrorLogConsumerService {
             containerFactory = "errorLogKafkaListenerContainerFactory")
     public void consumeErrorLogs(ErrorLogMessage message) {
 
+        message.setSource("consumer");
+
         ErrorLog errorLog = new ErrorLog();
         errorLog.setDate(message.getTimestamp());
         errorLog.setMessage(message.getMessage());

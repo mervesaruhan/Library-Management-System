@@ -14,4 +14,5 @@ public class RequestLogMessage {
     private String uri;
     private String username;
     private LocalDateTime timestamp;
+    private String source;
 }

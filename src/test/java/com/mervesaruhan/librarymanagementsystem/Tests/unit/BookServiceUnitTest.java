@@ -1,18 +1,17 @@
-package com.mervesaruhan.librarymanagementsystem.service.unit;
+package com.mervesaruhan.librarymanagementsystem.Tests.unit;
 
 
-import com.mervesaruhan.librarymanagementsystem.general.TestConstants;
 import com.mervesaruhan.librarymanagementsystem.general.TestDataGenerator;
-import com.mervesaruhan.librarymanagementsystem.service.BookService;
+import com.mervesaruhan.librarymanagementsystem.Tests.BookService;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Book;
-import com.mervesaruhan.librarymanagementsystem.model.enums.BookSearchField;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.BookMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
 
+import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.List;
-import java.util.ArrayList;
+
 import org.springframework.data.domain.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -40,6 +39,8 @@ class BookServiceUnitTest {
 
     @InjectMocks
     private BookService bookService;
+    @Mock
+    private LogHelper logHelper;
 
     private Book book;
     private BookDto bookDto;

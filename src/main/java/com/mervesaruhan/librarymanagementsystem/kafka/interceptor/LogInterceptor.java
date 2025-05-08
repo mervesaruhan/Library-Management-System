@@ -34,6 +34,9 @@ public class LogInterceptor implements HandlerInterceptor {
                 .uri(path)
                 .username(username)
                 .timestamp(LocalDateTime.now())
+
+                // Döngüye girmemesi için kaynak bilgisi eklendi
+                .source("app")
                 .build();
 
         kafkaLoggerProducer.sendRequestLog(logMessage);

@@ -1,9 +1,9 @@
-package com.mervesaruhan.librarymanagementsystem.service.authentication;
+package com.mervesaruhan.librarymanagementsystem.Tests.authentication;
 
 import com.mervesaruhan.librarymanagementsystem.controller.UserController;
+import com.mervesaruhan.librarymanagementsystem.model.exception.GeneralControllerAdvice;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
-import com.mervesaruhan.librarymanagementsystem.model.exception.GlobalExceptionHandler;
-import com.mervesaruhan.librarymanagementsystem.service.UserService;
+import com.mervesaruhan.librarymanagementsystem.Tests.UserService;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,14 +13,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
-@Import({MockSecurityConfig.class, GlobalExceptionHandler.class,ExtendedMockConfig.class, TestMethodSecurityConfig.class})
+@Import({MockSecurityConfig.class, GeneralControllerAdvice.class,ExtendedMockConfig.class, TestMethodSecurityConfig.class})
 class UserControllerSecurityTest {
 
     @Autowired

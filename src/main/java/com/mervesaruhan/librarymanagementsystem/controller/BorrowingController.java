@@ -1,11 +1,10 @@
 package com.mervesaruhan.librarymanagementsystem.controller;
 
 
-import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BorrowingSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import com.mervesaruhan.librarymanagementsystem.service.BorrowingService;
+import com.mervesaruhan.librarymanagementsystem.Tests.BorrowingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,7 +31,7 @@ public class BorrowingController {
 
     @PreAuthorize("hasRole('PATRON')")
     @PostMapping
-    @Operation(summary = "Borrowing operation",description = "ROLE:PATRON")
+    @Operation(summary = "Borrowing operation-ROLE:PATRON")
     public  ResponseEntity<RestResponse<BorrowingDto>> saveBorrowing(@Valid @RequestBody BorrowingSaveRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(RestResponse.of(borrowingService.saveBorrowing(requestDto)));
@@ -40,7 +39,7 @@ public class BorrowingController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('PATRON')")
-    @Operation(summary = "Return operation",description = "ROLE:PATRON")
+    @Operation(summary = "Return operation-ROLE:PATRON")
     public ResponseEntity<RestResponse<BorrowingDto>> returnBorrowing(@PathVariable long id) {
         return ResponseEntity.ok(RestResponse.of(borrowingService.returnBook(id)));
     }
@@ -48,7 +47,7 @@ public class BorrowingController {
 
     @GetMapping("/history/my")
     @PreAuthorize("hasRole('PATRON')")
-    @Operation(summary = "Get borrowing history for the logged-in user",description = "ROLE:PATRON")
+    @Operation(summary = "Get borrowing history for the logged-in user-ROLE:PATRON")
     public ResponseEntity<RestResponse<List<BorrowingDto>>> getMyBorrowingHistory() {
         return ResponseEntity.ok(RestResponse.of(borrowingService.getMyBorrowingHistory()));
     }
@@ -56,21 +55,21 @@ public class BorrowingController {
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/history/all")
-    @Operation(summary = "Get all borrowing history (only for librarians)",description = "ROLE:LIBRARIAN")
+    @Operation(summary = "Get all borrowing history -ROLE:LIBRARIAN")
     public ResponseEntity<RestResponse<List<BorrowingDto>>> getAllBorrowingHistory() {
         return ResponseEntity.ok(RestResponse.of(borrowingService.getAllBorrowingHistory()));
     }
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/overdue")
-    @Operation(summary = "Get all overdue borrowings",description = "ROLE:LIBRARIAN")
+    @Operation(summary = "Get all overdue borrowings-ROLE:LIBRARIAN")
     public ResponseEntity<RestResponse<List<BorrowingDto>>> getOverdueBorrowings() {
         return ResponseEntity.ok(RestResponse.of(borrowingService.getOverdueBorrowings()));
     }
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/overdue/report")
-    @Operation(summary = "Get detailed overdue report for librarians",description = "ROLE:LIBRARIAN")
+    @Operation(summary = "Get detailed overdue report for librarians-ROLE:LIBRARIAN")
     public ResponseEntity<RestResponse<String>> overdueBorrowingsReport() {
         return ResponseEntity.ok(RestResponse.of(borrowingService.generateOverdueReport()));
     }

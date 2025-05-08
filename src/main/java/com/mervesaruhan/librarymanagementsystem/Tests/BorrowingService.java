@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.service;
+package com.mervesaruhan.librarymanagementsystem.Tests;
 
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;

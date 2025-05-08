@@ -22,6 +22,8 @@ public class RequestLogConsumerService {
             containerFactory = "requestLogKafkaListenerContainerFactory")
     public void consumeInfos(RequestLogMessage message){
 
+        message.setSource("consumer");
+
         RequestLog requestLog = new RequestLog();
         requestLog.setDate(message.getTimestamp());
         requestLog.setMessage(message.getMethod() + " " + message.getUri());

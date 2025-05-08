@@ -51,14 +51,15 @@ public class RestResponse <T> {
         return new RestResponse<T>(message, status);
     }
 
-    public static <T> RestResponse<T> error(T t,String message) {
-        RestResponse<T> response = new RestResponse<>(t, false);
-        response.setMessage(message);
-        return response;
-    }
+//    public static <T> RestResponse<T> error(T t,String message) {
+//        RestResponse<T> response = new RestResponse<>(t, false);
+//        response.setMessage(message);
+//        return response;
+//    }
 
-//    private ErrorMessage ex;
-//    RestResponse<String> errorResponse = RestResponse.error(null, ex.getMessage());
+    public static <T> RestResponse<T> error(T t){
+        return new RestResponse<>(t, false);
+    }
 
 
     public static <T> RestResponse<T> empty(){

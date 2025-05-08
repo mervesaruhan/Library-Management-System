@@ -1,24 +1,19 @@
-package com.mervesaruhan.librarymanagementsystem.service;
+package com.mervesaruhan.librarymanagementsystem.Tests;
 
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.AuthResponse;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.AuthRequest;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.RegisterRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.User;
 import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
-import com.mervesaruhan.librarymanagementsystem.model.exception.BusinessException;
-import com.mervesaruhan.librarymanagementsystem.model.exception.ErrorMessage;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
 import com.mervesaruhan.librarymanagementsystem.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

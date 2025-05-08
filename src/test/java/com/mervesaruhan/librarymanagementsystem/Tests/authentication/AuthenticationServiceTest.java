@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.service.authentication;
+package com.mervesaruhan.librarymanagementsystem.Tests.authentication;
 
 import com.mervesaruhan.librarymanagementsystem.general.TestDataGenerator;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.AuthResponse;
@@ -8,8 +8,7 @@ import com.mervesaruhan.librarymanagementsystem.model.entity.User;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import com.mervesaruhan.librarymanagementsystem.security.CustomUserDetailsService;
 import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
-import com.mervesaruhan.librarymanagementsystem.service.AuthenticationService;
-import org.apache.kafka.clients.producer.KafkaProducer;
+import com.mervesaruhan.librarymanagementsystem.Tests.AuthenticationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {

@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.service.authentication;
+package com.mervesaruhan.librarymanagementsystem.Tests.authentication;
 
 import com.mervesaruhan.librarymanagementsystem.security.CustomUserDetailsService;
 import com.mervesaruhan.librarymanagementsystem.security.JwtAuthenticationFilter;

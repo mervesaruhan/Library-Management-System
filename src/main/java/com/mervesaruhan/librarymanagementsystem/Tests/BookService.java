@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.service;
+package com.mervesaruhan.librarymanagementsystem.Tests;
 
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
@@ -32,7 +32,7 @@ public class BookService {
 
         // ISBN benzersizlik kontrolü
         if (bookRepository.existsByIsbn(saveRequestDto.isbn())) {
-            logHelper.warn("Duplicate ISBN found while saving book: {}", saveRequestDto.isbn());
+            logHelper.error("Duplicate ISBN found while saving book: {}", saveRequestDto.isbn());
             throw new IllegalArgumentException("This ISBN number is already associated with a registered book.");
         }
 
@@ -83,7 +83,7 @@ public class BookService {
 
         //Başka bir kitapta bu isbn var mı kontrolü
         if (bookRepository.existsByIsbnAndIdNot(updateRequestDto.isbn(), id)) {
-            logHelper.warn("Duplicate ISBN found while updating book: {}", updateRequestDto.isbn());
+            logHelper.error("Duplicate ISBN found while updating book: {}", updateRequestDto.isbn());
             throw new IllegalArgumentException("This ISBN number is already associated with a registered book.");
         }
 

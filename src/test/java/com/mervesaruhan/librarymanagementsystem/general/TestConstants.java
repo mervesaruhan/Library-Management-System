@@ -1,6 +1,5 @@
 package com.mervesaruhan.librarymanagementsystem.general;
 
-import com.mervesaruhan.librarymanagementsystem.model.dto.response.OverdueReportDto;
 import com.mervesaruhan.librarymanagementsystem.model.enums.BorrowingStatusEnum;
 import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
 
@@ -24,8 +23,10 @@ public class TestConstants {
     //USER
     public static final Long TEST_USER_ID = 1L;
     public static final String TEST_USER_NAME = "Test User";
+    public static final String TEST_UPDATED_USER_NAME = "Updated Test User";
     public static final String TEST_USER_SURNAME = "Test Surname";
     public static final String TEST_USER_FULLNAME = TEST_USER_NAME + " " + TEST_USER_SURNAME;
+    public static final String TEST_UPDATED_USER_FULLNAME = TEST_UPDATED_USER_NAME + " " + TEST_USER_SURNAME;
     public static final String TEST_USER_EMAIL = "Test Email";
     public static final String TEST_USER_PHONE = "05556667788";
     public static final String TEST_USER_USERNAME = "Test Username";
@@ -37,7 +38,6 @@ public class TestConstants {
     public static final Boolean TEST_IS_INACTIVE = false;
 
     //BORROWING
-
     public static final Long TEST_BORROWING_ID = 1L;
     public static final LocalDate TEST_BORROW_DATE = LocalDate.now();
     public static final LocalDate TEST_DUE_DATE = LocalDate.now().plusDays(14);

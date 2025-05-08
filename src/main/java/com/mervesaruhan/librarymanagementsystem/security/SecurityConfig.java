@@ -43,11 +43,14 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler)
                 )
+                .headers(header -> header.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login","/auth/register").permitAll() // ✅ Allow public access to login
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // ✅ Allow public access to swagger
+                        .requestMatchers("/auth/login","/auth/register").permitAll() //  Allow public access to login
+                        .requestMatchers("/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/h2-console/**").permitAll() //  Allow public access to swagger
                         .anyRequest().authenticated() // 🔒 Secure all other endpoints
                         //.anyRequest().permitAll()
                 )
@@ -73,7 +76,8 @@ public class SecurityConfig {
                         "/swagger-resources/**",
                         "/swagger-ui.html",
                         "/auth/login",
-                        "/auth/register"
+                        "/auth/register",
+                        "/h-2 console/**"
                 );
     }
 }

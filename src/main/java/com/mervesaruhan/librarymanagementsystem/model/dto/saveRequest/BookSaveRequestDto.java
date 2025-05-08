@@ -37,7 +37,7 @@ public record BookSaveRequestDto(
         Integer pageCount,
 
         @NotNull(message =  "Envanter bilgisi boş olamaz.")
-        @Min(value = 0, message = "Envanter değeri sıfıra esit ya da büyük olmalı")
+        @Min(value = 1, message = "Envanter değeri sıfırdan büyük olmalı")
         Integer inventoryCount
 
 
