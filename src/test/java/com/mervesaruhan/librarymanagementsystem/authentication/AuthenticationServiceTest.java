@@ -1,6 +1,6 @@
-package com.mervesaruhan.librarymanagementsystem.Tests.authentication;
+package com.mervesaruhan.librarymanagementsystem.authentication;
 
-import com.mervesaruhan.librarymanagementsystem.general.TestDataGenerator;
+import com.mervesaruhan.librarymanagementsystem.general.UserTestDataGenerator;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.AuthResponse;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.AuthRequest;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.RegisterRequestDto;
@@ -8,7 +8,7 @@ import com.mervesaruhan.librarymanagementsystem.model.entity.User;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import com.mervesaruhan.librarymanagementsystem.security.CustomUserDetailsService;
 import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
-import com.mervesaruhan.librarymanagementsystem.Tests.AuthenticationService;
+import com.mervesaruhan.librarymanagementsystem.service.AuthenticationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,31 +30,32 @@ class AuthenticationServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private PasswordEncoder passwordEncoder;
+
     @Mock
     private JwtUtil jwtUtil;
+
     @Mock
     private CustomUserDetailsService userDetailsService;
+
     @Mock
     private AuthenticationManager authenticationManager;
-
 
     @InjectMocks
     private AuthenticationService authenticationService;
 
-
-
     @Test
     void shouldRegisterWithPatronRole() {
-        RegisterRequestDto request = TestDataGenerator.createRegisterRequestDto();
-        User user = TestDataGenerator.createUserPatron();
+
+        RegisterRequestDto request = UserTestDataGenerator.createRegisterRequestDto();
+        User user = UserTestDataGenerator.createUserPatron();
 
         Mockito.when(userRepository.existsByUsername(request.username())).thenReturn(false);
         Mockito.when(userRepository.existsByEmail(request.email())).thenReturn(false);
         Mockito.when(passwordEncoder.encode(Mockito.any())).thenReturn(user.getPassword());
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(user);
-
 
         UserDetails mockDetails = new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
@@ -75,7 +76,7 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldNotRegister_WhenUsernameExists() {
-        RegisterRequestDto request = TestDataGenerator.createRegisterRequestDto();
+        RegisterRequestDto request = UserTestDataGenerator.createRegisterRequestDto();
 
         Mockito.when(userRepository.existsByUsername(Mockito.any())).thenReturn(true);
 
@@ -84,8 +85,7 @@ class AuthenticationServiceTest {
 
     @Test
     void shouldAuthenticate() {
-        AuthRequest request = TestDataGenerator.createAuthRequest();
-        User user = TestDataGenerator.createUserLibrarian();
+        AuthRequest request = UserTestDataGenerator.createAuthRequest();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 request.username(), request.password());

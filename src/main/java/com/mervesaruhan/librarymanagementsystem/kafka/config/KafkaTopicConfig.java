@@ -13,8 +13,8 @@ public class KafkaTopicConfig {
 
     @Bean
     public KafkaAdmin.NewTopics createTopics() {
-        NewTopic errorLog = TopicBuilder.name("errorLog").build();
-        NewTopic requestLog = TopicBuilder.name("requestLog").build();
+        final NewTopic errorLog = TopicBuilder.name("errorLog").build();
+        final NewTopic requestLog = TopicBuilder.name("requestLog").build();
         return new KafkaAdmin.NewTopics(errorLog, requestLog);
     }
 }

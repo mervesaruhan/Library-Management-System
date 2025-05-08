@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.Tests.unit;
+package com.mervesaruhan.librarymanagementsystem.service;
 
 import com.mervesaruhan.librarymanagementsystem.general.TestConstants;
 import com.mervesaruhan.librarymanagementsystem.general.UserTestDataGenerator;
@@ -12,7 +12,6 @@ import com.mervesaruhan.librarymanagementsystem.model.entity.User;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.UserMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
-import com.mervesaruhan.librarymanagementsystem.Tests.UserService;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

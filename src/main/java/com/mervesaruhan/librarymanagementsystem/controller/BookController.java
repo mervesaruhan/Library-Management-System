@@ -6,7 +6,7 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRe
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.enums.BookSearchField;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import com.mervesaruhan.librarymanagementsystem.Tests.BookService;
+import com.mervesaruhan.librarymanagementsystem.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

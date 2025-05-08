@@ -1,8 +1,6 @@
-package com.mervesaruhan.librarymanagementsystem.Tests.unit;
+package com.mervesaruhan.librarymanagementsystem.service;
 
 
-import com.mervesaruhan.librarymanagementsystem.general.TestDataGenerator;
-import com.mervesaruhan.librarymanagementsystem.Tests.BookService;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
@@ -10,6 +8,7 @@ import com.mervesaruhan.librarymanagementsystem.model.entity.Book;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.BookMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
+import com.mervesaruhan.librarymanagementsystem.general.BookTestDataGenerator;
 
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,23 +36,24 @@ class BookServiceUnitTest {
     @Mock
     private BookMapper bookMapper;
 
-    @InjectMocks
-    private BookService bookService;
     @Mock
     private LogHelper logHelper;
+
+    @InjectMocks
+    private BookService bookService;
 
     private Book book;
     private BookDto bookDto;
 
     @BeforeEach
     void setUp() {
-        book = TestDataGenerator.createBook();
-        bookDto = TestDataGenerator.createBookDto();
+        book = BookTestDataGenerator.createBook();
+        bookDto = BookTestDataGenerator.createBookDto();
     }
 
     @Test
     void shouldSaveBookSuccessfully() {
-        BookSaveRequestDto request = TestDataGenerator.createBookSaveRequestDto();
+        BookSaveRequestDto request = BookTestDataGenerator.createBookSaveRequestDto();
 
         when(bookRepository.existsByIsbn(request.isbn())).thenReturn(false);
         when(bookMapper.toBookEntity(request)).thenReturn(book);
@@ -68,7 +68,7 @@ class BookServiceUnitTest {
 
     @Test
     void shouldThrowExceptionWhenIsbnAlreadyExists() {
-        BookSaveRequestDto request = TestDataGenerator.createBookSaveRequestDto();
+        BookSaveRequestDto request = BookTestDataGenerator.createBookSaveRequestDto();
 
         when(bookRepository.existsByIsbn(request.isbn())).thenReturn(true);
 
@@ -110,7 +110,7 @@ class BookServiceUnitTest {
 
     @Test
     void shouldUpdateBookSuccessfully() {
-        BookUpdateRequestDto updateDto = TestDataGenerator.createBookUpdateRequestDto();
+        BookUpdateRequestDto updateDto = BookTestDataGenerator.createBookUpdateRequestDto();
 
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         when(bookRepository.existsByIsbnAndIdNot(updateDto.isbn(), book.getId())).thenReturn(false);

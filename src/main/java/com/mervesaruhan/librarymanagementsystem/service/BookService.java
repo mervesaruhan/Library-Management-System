@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.Tests;
+package com.mervesaruhan.librarymanagementsystem.service;
 
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;

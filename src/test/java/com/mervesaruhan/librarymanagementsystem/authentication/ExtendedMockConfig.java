@@ -1,6 +1,6 @@
-package com.mervesaruhan.librarymanagementsystem.Tests.authentication;
+package com.mervesaruhan.librarymanagementsystem.authentication;
 
-import com.mervesaruhan.librarymanagementsystem.Tests.UserService;
+import com.mervesaruhan.librarymanagementsystem.service.UserService;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;

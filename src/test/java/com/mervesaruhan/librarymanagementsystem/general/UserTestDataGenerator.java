@@ -1,6 +1,9 @@
 package com.mervesaruhan.librarymanagementsystem.general;
 
+
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.UserDto;
+import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.AuthRequest;
+import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.RegisterRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.UserSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPasswordUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
@@ -22,6 +25,27 @@ public class UserTestDataGenerator {
                 createBorrowedBookDtoList()
         );
     }
+
+
+
+    public static RegisterRequestDto createRegisterRequestDto() {
+        return new RegisterRequestDto(
+                TestConstants.TEST_USER_NAME,
+                TestConstants.TEST_USER_SURNAME,
+                TestConstants.TEST_USER_EMAIL,
+                TestConstants.TEST_USER_PHONE,
+                TestConstants.TEST_USER_USERNAME,
+                TestConstants.TEST_USER_PASSWORD
+        );
+    }
+
+    public static AuthRequest createAuthRequest(){
+        return new AuthRequest(
+                TestConstants.TEST_USER_USERNAME,
+                TestConstants.TEST_USER_PASSWORD
+        );
+    }
+
 
     public static UserDto createUpdatedUserDto() {
         return new UserDto(

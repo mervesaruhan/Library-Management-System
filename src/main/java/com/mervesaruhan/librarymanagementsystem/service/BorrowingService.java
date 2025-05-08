@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.Tests;
+package com.mervesaruhan.librarymanagementsystem.service;
 
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
@@ -34,7 +34,6 @@ public class BorrowingService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final BookService bookService;
     private final LogHelper logHelper;
 
 
@@ -132,14 +131,11 @@ public class BorrowingService {
         logHelper.info("Checking for overdue borrowings");
         LocalDate today = LocalDate.now();
 
-        List<Borrowing> overdueList = borrowingRepository
-                .findByDueDateBeforeAndStatus(today, BORROWED);
-
-        logHelper.info("Querying borrowings with dueDate < today and status = BORROWED");
-
-        // Overdue olanların durumunu güncelle - takip için
-        for(Borrowing b : overdueList)
-            b.setStatus(OVERDUE);
+        final List<Borrowing> overdueList = borrowingRepository
+                .findByDueDateBeforeAndStatus(today, BORROWED)
+                .stream()
+                .peek(b -> b.setStatus(OVERDUE))
+                .toList();
 
         borrowingRepository.saveAll(overdueList);
 

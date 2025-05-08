@@ -7,7 +7,7 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserPass
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRoleUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import com.mervesaruhan.librarymanagementsystem.Tests.UserService;
+import com.mervesaruhan.librarymanagementsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

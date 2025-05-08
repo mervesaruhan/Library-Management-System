@@ -1,9 +1,9 @@
-package com.mervesaruhan.librarymanagementsystem.Tests.authentication;
+package com.mervesaruhan.librarymanagementsystem.authentication;
 
 import com.mervesaruhan.librarymanagementsystem.controller.UserController;
 import com.mervesaruhan.librarymanagementsystem.model.exception.GeneralControllerAdvice;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
-import com.mervesaruhan.librarymanagementsystem.Tests.UserService;
+import com.mervesaruhan.librarymanagementsystem.service.UserService;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

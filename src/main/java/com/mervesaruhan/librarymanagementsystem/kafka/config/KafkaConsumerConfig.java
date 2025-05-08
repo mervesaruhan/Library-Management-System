@@ -26,7 +26,7 @@ public class KafkaConsumerConfig {
     private String bootstrapServers;
 
     private Map<String, Object> baseConfigs() {
-        Map<String, Object> props = new HashMap<>();
+        final Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "log-consumer-group");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -36,7 +36,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, RequestLogMessage> requestLogConsumerFactory() {
-        JsonDeserializer<RequestLogMessage> deserializer = new JsonDeserializer<>(RequestLogMessage.class);
+        final JsonDeserializer<RequestLogMessage> deserializer = new JsonDeserializer<>(RequestLogMessage.class);
         deserializer.addTrustedPackages("*");
         deserializer.setRemoveTypeHeaders(false);
         deserializer.setUseTypeMapperForKey(true);
@@ -45,14 +45,14 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, RequestLogMessage> requestLogKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, RequestLogMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        final ConcurrentKafkaListenerContainerFactory<String, RequestLogMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(requestLogConsumerFactory());
         return factory;
     }
 
     @Bean
     public ConsumerFactory<String, ErrorLogMessage> errorLogConsumerFactory() {
-        JsonDeserializer<ErrorLogMessage> deserializer = new JsonDeserializer<>(ErrorLogMessage.class);
+        final JsonDeserializer<ErrorLogMessage> deserializer = new JsonDeserializer<>(ErrorLogMessage.class);
         deserializer.addTrustedPackages("*");
         deserializer.setRemoveTypeHeaders(false);
         deserializer.setUseTypeMapperForKey(true);
@@ -61,7 +61,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, ErrorLogMessage> errorLogKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ErrorLogMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        final ConcurrentKafkaListenerContainerFactory<String, ErrorLogMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(errorLogConsumerFactory());
         return factory;
     }

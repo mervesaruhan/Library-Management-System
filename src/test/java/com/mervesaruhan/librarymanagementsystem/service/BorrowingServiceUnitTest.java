@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.Tests.unit;
+package com.mervesaruhan.librarymanagementsystem.service;
 
 
 import com.mervesaruhan.librarymanagementsystem.general.BookTestDataGenerator;
@@ -17,8 +17,6 @@ import com.mervesaruhan.librarymanagementsystem.model.mapper.BorrowingMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
 import com.mervesaruhan.librarymanagementsystem.repository.BorrowingRepository;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
-import com.mervesaruhan.librarymanagementsystem.Tests.BorrowingService;
-import com.mervesaruhan.librarymanagementsystem.Tests.UserService;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;

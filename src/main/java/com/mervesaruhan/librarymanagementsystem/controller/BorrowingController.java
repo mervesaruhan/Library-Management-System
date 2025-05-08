@@ -4,7 +4,7 @@ package com.mervesaruhan.librarymanagementsystem.controller;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BorrowingSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import com.mervesaruhan.librarymanagementsystem.Tests.BorrowingService;
+import com.mervesaruhan.librarymanagementsystem.service.BorrowingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
