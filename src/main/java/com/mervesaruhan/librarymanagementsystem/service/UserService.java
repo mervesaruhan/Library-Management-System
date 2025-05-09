@@ -42,7 +42,7 @@ public class UserService {
             throw new IllegalArgumentException("This email address is already in use by another user");
         }
 
-        User user = userMapper.toEntity(userSaveRequestDto);
+        final User user = userMapper.toEntity(userSaveRequestDto);
         user.setActive(true);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -51,19 +51,15 @@ public class UserService {
 
     }
 
-
-
     public UserDto getUserById(Long id){
         return userRepository.findById(id)
                 .map(userMapper::toUserDto)
                 .orElseThrow(() -> new InvalidUserIdException(id));
     }
 
-
     public Page<UserDto> findAllUsers(Pageable pageable){
         return userRepository.findAll(pageable).map(userMapper::toUserDto);
     }
-
 
     public UserDto updateUser(Long id, UserUpdateRequestDto userUpdateRequestDto){
 
@@ -80,18 +76,16 @@ public class UserService {
             throw new IllegalArgumentException("This email address is already in use by another user");
         }
 
-        User user = userRepository.findUserById(id);
+        final User user = userRepository.findUserById(id);
         user.setUsername(userUpdateRequestDto.username());
         user.setEmail(userUpdateRequestDto.email());
         user.setPhone(userUpdateRequestDto.phone());
         user.setName(userUpdateRequestDto.name());
         user.setSurname(userUpdateRequestDto.surname());
-
         userRepository.save(user);
 
         logHelper.info("User updated successfully. ID: {}", id);
         return userMapper.toUserDto(user);
-
     }
 
     public UserDto updateUserPassword(Long id, UserPasswordUpdateRequestDto passwordUpdateDto){
@@ -99,7 +93,7 @@ public class UserService {
             logHelper.warn("Attempted password update for non-existent user. ID: {}", id);
             throw new InvalidUserIdException(id);
         }
-        User user = userRepository.findUserById(id);
+        final User user = userRepository.findUserById(id);
 
         if(!passwordUpdateDto.currentPassword().equals(user.getPassword())){
             logHelper.warn("Incorrect current password for user ID: {}", id);
@@ -109,17 +103,16 @@ public class UserService {
             logHelper.warn("New password matches current password. ID: {}", id);
             throw new IllegalArgumentException("Please choose a new password different from your current one.");
         }
-        //user.setPassword(passwordUpdateDto.newPassword());
+
         user.setPassword(passwordEncoder.encode(passwordUpdateDto.newPassword()));
         userRepository.save(user);
         logHelper.info("Password updated successfully for user ID: {}", id);
         return userMapper.toUserDto(user);
     }
 
-
     public UserDto updateUserRole(Long id, UserRoleUpdateRequestDto roleUpdateRequestDto){
 
-        User user = userRepository.findById(id).orElseThrow(() -> new InvalidUserIdException(id));
+        final User user = userRepository.findById(id).orElseThrow(() -> new InvalidUserIdException(id));
         user.setRole(roleUpdateRequestDto.role());
 
         userRepository.save(user);
@@ -127,33 +120,38 @@ public class UserService {
         return userMapper.toUserDto(user);
     }
 
-    public UserDto checkUserEligibilityAndUpdateStatus(Long id, Boolean active) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new InvalidUserIdException(id));
+    public boolean isUserEligible(Long userId) {
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidUserIdException(userId));
 
-        // Ödünç alınmış kitaplar (return yapılmamış)
         List<Borrowing> activeBorrowings = user.getBorrowedList().stream()
                 .filter(b -> b.getReturnDate() == null)
                 .toList();
 
-        // Koşul 1: 5'ten fazla aktif kitap varsa
         boolean hasMoreThanFiveBooks = activeBorrowings.size() >= 5;
-
-        // Koşul 2: En az bir gecikmiş kitap varsa
         boolean hasOverdue = activeBorrowings.stream()
                 .anyMatch(b -> b.getDueDate().isBefore(LocalDate.now()));
 
-        // Otomatik pasif duruma geçirme
-        if (hasMoreThanFiveBooks || hasOverdue) {
-            user.setActive(false);
-            logHelper.warn("User {} set to passive due to rule violation. More than 5 books or overdue detected.", id);
+        return !(hasMoreThanFiveBooks || hasOverdue);
+    }
+
+    public UserDto checkUserEligibilityAndUpdateStatus(Long userId) {
+
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidUserIdException(userId));
+
+        boolean expectedStatus = isUserEligible(userId);
+
+        if (expectedStatus != Boolean.TRUE.equals(user.getActive())) {
+            user.setActive(expectedStatus);
+            userRepository.save(user);
+            String status = expectedStatus ? "active" : "passive";
+            logHelper.info("User {} status updated to {}", userId, status);
         } else {
-            user.setActive(active); // elle güncelleme yapılmışsa sadece geçerli koşullarda uygula
+            logHelper.debug("User {} status already correct.", userId);
         }
 
-        userRepository.save(user);
-        logHelper.info("User active status updated. ID: {}, active: {}", id, user.getActive());
         return userMapper.toUserDto(user);
     }
 
@@ -167,5 +165,4 @@ public class UserService {
         userRepository.delete(user);
         logHelper.info("User deleted successfully. ID: {}", id);
     }
-
 }

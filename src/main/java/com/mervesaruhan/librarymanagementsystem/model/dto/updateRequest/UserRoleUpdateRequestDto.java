@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserRoleUpdateRequestDto(
 
-        @NotNull(message = "Rol boş olamaz.")
+        @NotNull(message = "Role cannot be blank.")
         RoleEnum role
 ) {}

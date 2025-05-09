@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class BookService {
+
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final LogHelper logHelper;
@@ -30,36 +31,30 @@ public class BookService {
         logHelper.info("Attempting to save book with title: {}, author: {}, isbn: {}",
                 saveRequestDto.title(), saveRequestDto.author(), saveRequestDto.isbn());
 
-        // ISBN benzersizlik kontrolü
         if (bookRepository.existsByIsbn(saveRequestDto.isbn())) {
-            logHelper.error("Duplicate ISBN found while saving book: {}", saveRequestDto.isbn());
+            logHelper.warn("Duplicate ISBN found while saving book: {}", saveRequestDto.isbn());
             throw new IllegalArgumentException("This ISBN number is already associated with a registered book.");
         }
 
-        Book book = bookMapper.toBookEntity(saveRequestDto);
-
+        final Book book = bookMapper.toBookEntity(saveRequestDto);
         bookRepository.save(book);
         logHelper.info("Book saved successfully. Generated ID: {}", book.getId());
         return bookMapper.toBookDto(book);
     }
-
-
 
     public Page<BookDto> findAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .map(bookMapper::toBookDto);
     }
 
-
     public BookDto findById(Long id){
         return bookRepository.findById(id).map(bookMapper::toBookDto)
                 .orElseThrow(() -> new InvalidBookIdException(id));
     }
 
-
     public Page<BookDto> searchBooks(String keyword, Pageable pageable, BookSearchField field) {
         logHelper.info("Searching books with keyword: {}, field: {}", keyword, field);
-        Page<Book> books = switch (field) {
+        final Page<Book> books = switch (field) {
             case TITLE -> bookRepository.findByTitleContainingIgnoreCase(keyword, pageable);
             case AUTHOR -> bookRepository.findByAuthorContainingIgnoreCase(keyword, pageable);
             case ISBN -> bookRepository.findByIsbnContainingIgnoreCase(keyword, pageable);
@@ -74,14 +69,11 @@ public class BookService {
         return books.map(bookMapper::toBookDto);
     }
 
-
-
     public BookDto updateBook(BookUpdateRequestDto updateRequestDto, Long id){
         logHelper.info("Updating book with ID: {}", id);
-        Book book= bookRepository.findById(id)
+        final Book book= bookRepository.findById(id)
                 .orElseThrow(() -> new InvalidBookIdException(id));
 
-        //Başka bir kitapta bu isbn var mı kontrolü
         if (bookRepository.existsByIsbnAndIdNot(updateRequestDto.isbn(), id)) {
             logHelper.error("Duplicate ISBN found while updating book: {}", updateRequestDto.isbn());
             throw new IllegalArgumentException("This ISBN number is already associated with a registered book.");
@@ -103,10 +95,9 @@ public class BookService {
 
     }
 
-
     public BookDto updateInventory(Long id, int inventoryCount){
         logHelper.info("Updating inventory for book ID: {} to count: {}", id, inventoryCount);
-        Book book = bookRepository.findById(id)
+        final Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new InvalidBookIdException(id));
         book.setInventoryCount(inventoryCount);
         bookRepository.save(book);
@@ -114,19 +105,16 @@ public class BookService {
         return bookMapper.toBookDto(book);
     }
 
-
-    public Page<BookDto> getBooksByAvailability(int count, Pageable pageable){
-        Page<Book> books = bookRepository.findBooksByInventoryCountGreaterThan(count, pageable);
+    public Page<BookDto> getBooksByAvailability(Pageable pageable) {
+        final Page<Book> books = bookRepository.findBooksByInventoryCountGreaterThan(0, pageable);
         return books.map(bookMapper::toBookDto);
     }
 
-
     public void deleteBook(Long id){
         logHelper.info("Deleting book with ID: {}", id);
-        Book book = bookRepository.findById(id)
+        final Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new InvalidBookIdException(id));
         bookRepository.delete(book);
         logHelper.info("Book deleted successfully. ID: {}", id);
     }
-
 }

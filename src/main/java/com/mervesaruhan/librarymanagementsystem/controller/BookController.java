@@ -33,7 +33,7 @@ public class BookController {
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
-    @Operation(summary = "Save book-ROLE:LIBRARIAN")
+    @Operation(summary = "Save book- ROLE: LIBRARIAN")
     public ResponseEntity<RestResponse<BookDto>> saveBook(@RequestBody @Valid BookSaveRequestDto bookSaveRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(RestResponse.of(bookService.saveBook(bookSaveRequestDto)));
@@ -42,14 +42,14 @@ public class BookController {
 
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping
-    @Operation(summary = "Get all books with pagination-ROLE:LIBRARIAN/PATRON")
+    @Operation(summary = "Get all books with pagination- ROLE: LIBRARIAN / PATRON")
     public ResponseEntity<RestResponse<Page<BookDto>>> getAllBooks(@Parameter(hidden = true) Pageable pageable) {
         return ResponseEntity.ok(RestResponse.of(bookService.findAllBooks(pageable)));
     }
 
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping("/{id}")
-    @Operation(summary = "Get book by using id-ROLE:LIBRARIAN/PATRON")
+    @Operation(summary = "Get book by using id- ROLE: LIBRARIAN / PATRON")
     public ResponseEntity<RestResponse<BookDto>> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(RestResponse.of(bookService.findById(id)));
     }
@@ -57,21 +57,21 @@ public class BookController {
 
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping("/search/filter")
-    @Operation(summary = "search for a book containing the selected field and the keyword-ROLE:LIBRARIAN/PATRON")
+    @Operation(summary = "search for a book containing the selected field and the keyword- ROLE: LIBRARIAN / PATRON")
     public ResponseEntity<RestResponse<Page<BookDto>>> searchBooks(@RequestParam String keyword, @Parameter(hidden = true) Pageable pageable, @RequestParam BookSearchField field){
         return ResponseEntity.ok(RestResponse.of(bookService.searchBooks(keyword, pageable, field)));
     }
 
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'PATRON')")
     @GetMapping("/availability")
-    @Operation(summary = "Get books by Inventory count to see availability-ROLE:LIBRARIAN/PATRON")
-    public ResponseEntity<RestResponse<Page<BookDto>>> getBooksByAvailability(@Parameter(hidden = true) Pageable pageable, int count) {
-        return ResponseEntity.ok(RestResponse.of(bookService.getBooksByAvailability(count, pageable)));
+    @Operation(summary = "Get books by Inventory count to see availability- ROLE: LIBRARIAN / PATRON")
+    public ResponseEntity<RestResponse<Page<BookDto>>> getBooksByAvailability(@Parameter(hidden = true) Pageable pageable) {
+        return ResponseEntity.ok(RestResponse.of(bookService.getBooksByAvailability(pageable)));
     }
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PutMapping("/{id}/inventoryCount/{count}")
-    @Operation(summary = "updating book inventory count-ROLE:LIBRARIAN")
+    @Operation(summary = "updating book inventory count- ROLE: LIBRARIAN")
     public ResponseEntity<RestResponse<BookDto>> updateBookInventoryCount( @PathVariable @NotNull Long id, @PathVariable @NotNull Integer count) {
         return ResponseEntity.ok(RestResponse.of(bookService.updateInventory(id, count)));
     }
@@ -79,7 +79,7 @@ public class BookController {
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PutMapping("/{id}")
-    @Operation(summary = "update book by id-ROLE:LIBRARIAN")
+    @Operation(summary = "update book by id- ROLE: LIBRARIAN")
     public ResponseEntity<RestResponse<BookDto>> updateBook(@RequestBody @Valid BookUpdateRequestDto bookUpdateRequestDto, @PathVariable @NotNull Long id) {
         return ResponseEntity.ok(RestResponse.of(bookService.updateBook(bookUpdateRequestDto,id)));
     }
@@ -87,7 +87,7 @@ public class BookController {
 
     @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete book by using id-ROLE:LIBRARIAN")
+    @Operation(summary = "Delete book by using id- ROLE: LIBRARIAN")
     public ResponseEntity<RestResponse<Void>> deleteBook(@PathVariable @NotNull Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.ok(RestResponse.empty());

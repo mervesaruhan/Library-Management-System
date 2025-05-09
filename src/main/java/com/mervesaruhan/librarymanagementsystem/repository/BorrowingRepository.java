@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public interface BorrowingRepository extends JpaRepository<Borrowing, Long> {
-    List<Borrowing> findAllByUserId(Long userId);
+
     List<Borrowing> findByDueDateBeforeAndStatus(LocalDate date, BorrowingStatusEnum status);
     int countByStatus(BorrowingStatusEnum status);
-
     List<Borrowing> findAllByUserUsername(String username);
+    List<Borrowing> findByStatus(BorrowingStatusEnum status);
 }

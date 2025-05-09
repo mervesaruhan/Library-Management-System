@@ -16,10 +16,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -38,7 +35,7 @@ public class GeneralControllerAdvice extends ResponseEntityExceptionHandler {
         List<Map<String, String>> errorList = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(fieldError -> Map.of(fieldError.getField(), fieldError.getDefaultMessage()))
+                .map(fieldError -> Map.of(fieldError.getField(), Objects.requireNonNull(fieldError.getDefaultMessage())))
                 .toList();
 
         GeneralMessagesForValidations errorBody = new GeneralMessagesForValidations(
@@ -62,14 +59,14 @@ public class GeneralControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidUserIdException.class)
     public ResponseEntity<Object> handleInvalidUserId(InvalidUserIdException ex, WebRequest request) {
         var error = new GeneralErrorMessages(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-        logHelper.warn("InvalidUserIdException: {}", ex.getMessage());
+        logHelper.error("InvalidUserIdException: {}", ex.getMessage());
         return new ResponseEntity<>(RestResponse.error(error), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidBookIdException.class)
     public ResponseEntity<Object> handleInvalidBookId(InvalidBookIdException ex, WebRequest request) {
         var error = new GeneralErrorMessages(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-        logHelper.warn("InvalidBookIdException: {}", ex.getMessage());
+        logHelper.error("InvalidBookIdException: {}", ex.getMessage());
         return new ResponseEntity<>(RestResponse.error(error), HttpStatus.NOT_FOUND);
     }
 
@@ -77,7 +74,7 @@ public class GeneralControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
         String message = ex.getMessage() != null
                 ? ex.getMessage()
-                : GeneralErrorMessage.BAD_REQUEST.getMessage(); // veya USER_NOT_FOUND, ihtiyaca göre
+                : GeneralErrorMessage.BAD_REQUEST.getMessage();
 
         var errorBody = new GeneralMessagesForValidations(
                 LocalDateTime.now(),
@@ -88,7 +85,6 @@ public class GeneralControllerAdvice extends ResponseEntityExceptionHandler {
         logHelper.warn("EntityNotFoundException: {}", ex.getMessage());
         return new ResponseEntity<>(RestResponse.error(errorBody), HttpStatus.NOT_FOUND);
     }
-
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
@@ -102,10 +98,9 @@ public class GeneralControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getDescription(false),
                 null
         );
-        logHelper.warn("IllegalArgumentException: {}", ex.getMessage());
+        logHelper.error("IllegalArgumentException: {}", ex.getMessage());
         return new ResponseEntity<>(RestResponse.error(errorBody), HttpStatus.BAD_REQUEST);
     }
-
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Object> handleIllegalState(IllegalStateException ex, WebRequest request) {
@@ -124,26 +119,23 @@ public class GeneralControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(RestResponse.error(errorBody), HttpStatus.CONFLICT);
     }
 
-
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<Object> handleAuthorizationDenied(AuthorizationDeniedException ex, WebRequest request) {
-        logHelper.warn("AuthorizationDeniedException: {}", ex.getMessage());
+        logHelper.error("AuthorizationDeniedException: {}", ex.getMessage());
         return new ResponseEntity<>(
                 RestResponse.errorAuth(GeneralErrorMessage.ACCESS_DENIED, HttpStatus.FORBIDDEN),
                 HttpStatus.FORBIDDEN
         );
     }
-
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
-        logHelper.warn("AccessDeniedException: {}", ex.getMessage());
+        logHelper.error("AccessDeniedException: {}", ex.getMessage());
         return new ResponseEntity<>(
                 RestResponse.errorAuth(GeneralErrorMessage.ACCESS_DENIED, HttpStatus.FORBIDDEN),
                 HttpStatus.FORBIDDEN
         );
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {

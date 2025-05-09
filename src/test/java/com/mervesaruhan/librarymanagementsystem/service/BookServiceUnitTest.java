@@ -9,7 +9,6 @@ import com.mervesaruhan.librarymanagementsystem.model.exception.customizedExcept
 import com.mervesaruhan.librarymanagementsystem.model.mapper.BookMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
 import com.mervesaruhan.librarymanagementsystem.general.BookTestDataGenerator;
-
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,6 +132,28 @@ class BookServiceUnitTest {
         assertThat(result).isEqualTo(bookDto);
         assertThat(book.getInventoryCount()).isEqualTo(88);
     }
+
+    @Test
+    void shouldReturnBooksWithAvailableInventory() {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Book book = BookTestDataGenerator.createBook();
+        BookDto bookDto = BookTestDataGenerator.createBookDto();
+
+        Page<Book> bookPage = new PageImpl<>(List.of(book));
+        when(bookRepository.findBooksByInventoryCountGreaterThan(0, pageable)).thenReturn(bookPage);
+        when(bookMapper.toBookDto(book)).thenReturn(bookDto);
+
+        Page<BookDto> result = bookService.getBooksByAvailability(pageable);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().getFirst()).isEqualTo(bookDto);
+
+        verify(bookRepository).findBooksByInventoryCountGreaterThan(0, pageable);
+        verify(bookMapper).toBookDto(book);
+    }
+
 
     @Test
     void shouldDeleteBookSuccessfully() {

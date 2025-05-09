@@ -5,6 +5,7 @@ import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
 import com.mervesaruhan.librarymanagementsystem.model.exception.GeneralErrorMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -14,14 +15,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    //private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper objectMapper;
-
-    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,

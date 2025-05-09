@@ -8,6 +8,7 @@ import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
 import com.mervesaruhan.librarymanagementsystem.security.CustomUserDetailsService;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Builder
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
@@ -26,7 +28,7 @@ public class AuthenticationService {
     private final JwtUtil jwtUtil;
 
     public AuthResponse authenticate(AuthRequest request) {
-        // Spring Security authentication
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
@@ -34,10 +36,8 @@ public class AuthenticationService {
                 )
         );
 
-        // Kullanıcıyı statik ya da DB'den getir
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
 
-        // Token üret
         String token = jwtUtil.generateToken(userDetails);
         return new AuthResponse(token);
     }

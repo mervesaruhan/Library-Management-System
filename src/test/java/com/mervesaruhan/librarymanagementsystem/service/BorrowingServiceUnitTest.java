@@ -93,8 +93,8 @@ class BorrowingServiceUnitTest {
         when(borrowingRepository.save(any(Borrowing.class))).thenReturn(borrowing);
         when(borrowingMapper.toBorrowingDto(any(Borrowing.class))).thenReturn(borrowingDto);
 
-
-        when(userService.checkUserEligibilityAndUpdateStatus(user.getId(), true))
+        when(userService.isUserEligible(user.getId())).thenReturn(true);
+        when(userService.checkUserEligibilityAndUpdateStatus(user.getId()))
                 .thenReturn(UserTestDataGenerator.createUserDto());
 
         BorrowingDto result = borrowingService.saveBorrowing(requestDto);
@@ -102,7 +102,7 @@ class BorrowingServiceUnitTest {
         assertThat(result).isEqualTo(borrowingDto);
         verify(bookRepository).save(book);
         verify(borrowingRepository).save(any(Borrowing.class));
-        verify(userService).checkUserEligibilityAndUpdateStatus(user.getId(), true);
+        verify(userService).checkUserEligibilityAndUpdateStatus(user.getId());
     }
 
 
@@ -118,35 +118,37 @@ class BorrowingServiceUnitTest {
 
     @Test
     void shouldThrowExceptionWhenBookNotFound() {
+
         BorrowingSaveRequestDto requestDto = new BorrowingSaveRequestDto(1L, 999L);
 
         when(userRepository.findById(requestDto.userId())).thenReturn(Optional.of(user));
+        when(userService.isUserEligible(user.getId())).thenReturn(true);
+
         when(bookRepository.findById(requestDto.bookId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> borrowingService.saveBorrowing(requestDto))
                 .isInstanceOf(InvalidBookIdException.class);
     }
 
-    @Test
     void shouldThrowExceptionWhenUserIsInactive() {
         user.setActive(false);
         BorrowingSaveRequestDto requestDto = new BorrowingSaveRequestDto(1L, 1L);
 
         when(userRepository.findById(requestDto.userId())).thenReturn(Optional.of(user));
-        when(bookRepository.findById(requestDto.bookId())).thenReturn(Optional.of(book));
+        when(userService.isUserEligible(user.getId())).thenReturn(false);
 
         assertThatThrownBy(() -> borrowingService.saveBorrowing(requestDto))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("The user is currently inactive");
+                .hasMessageContaining("User is not eligible to borrow");
     }
 
     @Test
     void shouldThrowExceptionWhenBookInventoryIsInsufficient() {
         book.setInventoryCount(0);
-
         BorrowingSaveRequestDto requestDto = new BorrowingSaveRequestDto(1L, 1L);
 
         when(userRepository.findById(requestDto.userId())).thenReturn(Optional.of(user));
+        when(userService.isUserEligible(user.getId())).thenReturn(true);
         when(bookRepository.findById(requestDto.bookId())).thenReturn(Optional.of(book));
 
         assertThatThrownBy(() -> borrowingService.saveBorrowing(requestDto))
@@ -183,7 +185,7 @@ class BorrowingServiceUnitTest {
 
         assertThatThrownBy(() -> borrowingService.returnBook(1L))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("There is no borrowing record for the given  ID");
+                .hasMessageContaining("There is no borrowing record for the given ID");
     }
 
     @Test
@@ -236,7 +238,7 @@ class BorrowingServiceUnitTest {
                 .thenReturn(overdueBorrowings);
         when(borrowingMapper.toBorrowingDtoList(overdueBorrowings)).thenReturn(List.of(borrowingDto));
 
-        List<BorrowingDto> result = borrowingService.getOverdueBorrowings();
+        List<BorrowingDto> result = borrowingService.getAndUpdateOverdueBorrowings();
 
         assertThat(result).hasSize(1).containsExactly(borrowingDto);
         verify(borrowingRepository).findByDueDateBeforeAndStatus(any(LocalDate.class), eq(BorrowingStatusEnum.BORROWED));
@@ -275,7 +277,7 @@ class BorrowingServiceUnitTest {
         when(borrowingRepository.countByStatus(BorrowingStatusEnum.OVERDUE)).thenReturn(2);
         when(bookRepository.count()).thenReturn(50L);
 
-        when(borrowingServiceTest.getOverdueBorrowings()).thenReturn(overdueList);
+        when(borrowingServiceTest.getAndUpdateOverdueBorrowings()).thenReturn(overdueList);
 
         String report = borrowingServiceTest.generateOverdueReport();
 

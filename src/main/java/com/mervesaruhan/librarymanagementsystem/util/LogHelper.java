@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Component
-public class LogHelper {
+public final class LogHelper {
 
     private final KafkaLoggerProducer kafkaLoggerProducer;
     public LogHelper(@Autowired(required = false) KafkaLoggerProducer kafkaLoggerProducer) {

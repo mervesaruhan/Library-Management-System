@@ -166,12 +166,6 @@ class UserServiceUnitTest {
         verify(userMapper).toUserDto(updatedUser);
     }
 
-    /// //////
-    /// //////
-    /// //////
-    /// //////
-    /// //////
-    /// //////
     @Test
     void shouldUpdateUserSuccessfully2() {
         Long userId = 1L;
@@ -303,12 +297,12 @@ class UserServiceUnitTest {
 
     @Test
     void shouldUpdateActiveStatusWhenNoEligibilityViolation() {
+
         Long userId = TestConstants.TEST_USER_ID;
-        Boolean newStatus = true;
 
         User user = UserTestDataGenerator.createUserLibrarian();
         user.setActive(false);
-        user.setBorrowedList(List.of()); // aktif ödünç yok
+        user.setBorrowedList(List.of());
 
         UserDto expectedDto = UserTestDataGenerator.createUserDto();
 
@@ -316,10 +310,11 @@ class UserServiceUnitTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserDto(user)).thenReturn(expectedDto);
 
-        UserDto result = userService.checkUserEligibilityAndUpdateStatus(userId, newStatus);
+        UserDto result = userService.checkUserEligibilityAndUpdateStatus(userId);
 
         assertThat(result).isEqualTo(expectedDto);
         assertThat(user.getActive()).isTrue();
+
         verify(userRepository).save(user);
         verify(userMapper).toUserDto(user);
     }
@@ -335,8 +330,8 @@ class UserServiceUnitTest {
         List<Borrowing> borrowings = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             Borrowing borrowing = new Borrowing();
-            borrowing.setReturnDate(null); // hala iade edilmemiş
-            borrowing.setDueDate(LocalDate.now().plusDays(3)); // gecikmiş değil
+            borrowing.setReturnDate(null);
+            borrowing.setDueDate(LocalDate.now().plusDays(3));
             borrowings.add(borrowing);
         }
         user.setBorrowedList(borrowings);
@@ -348,7 +343,7 @@ class UserServiceUnitTest {
                 expectedDto.email(),
                 expectedDto.username(),
                 expectedDto.role(),
-                false, // otomatik pasifleştirme sonucu
+                false,
                 expectedDto.borrowedList()
         );
 
@@ -356,7 +351,7 @@ class UserServiceUnitTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserDto(user)).thenReturn(expectedDto);
 
-        UserDto result = userService.checkUserEligibilityAndUpdateStatus(userId, true);
+        UserDto result = userService.checkUserEligibilityAndUpdateStatus(userId);
 
         assertThat(user.getActive()).isFalse();
         assertThat(result.active()).isFalse();
@@ -394,7 +389,7 @@ class UserServiceUnitTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserDto(user)).thenReturn(expectedDto);
 
-        UserDto result = userService.checkUserEligibilityAndUpdateStatus(userId, true);
+        UserDto result = userService.checkUserEligibilityAndUpdateStatus(userId);
 
         assertThat(user.getActive()).isFalse();
         assertThat(result.active()).isFalse();

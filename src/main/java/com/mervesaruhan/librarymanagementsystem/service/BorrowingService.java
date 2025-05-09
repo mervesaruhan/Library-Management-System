@@ -1,5 +1,6 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
+import com.mervesaruhan.librarymanagementsystem.model.enums.BorrowingStatusEnum;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BorrowingSaveRequestDto;
@@ -41,24 +42,24 @@ public class BorrowingService {
 
         logHelper.info("Creating borrowing: userId={}, bookId={}", saveRequestDto.userId(), saveRequestDto.bookId());
 
-        //Kullanıcı  ve kitap kontrolü: sistemde böyle bir kullanıcı/kitap var mı ? Varsa active/ envanteri yeterli  durumda mı?
+        //Kullanıcı  ve kitap kontrolu (id ve müsaitlik kontolu)
         User user = userRepository.findById(saveRequestDto.userId())
                 .orElseThrow(() -> new InvalidUserIdException(saveRequestDto.userId()));
 
+        if (!userService.isUserEligible(user.getId())) {
+            logHelper.warn("Inactive user attempted to borrow. userId={}", user.getId());
+            throw new IllegalArgumentException("User is not eligible to borrow due to overdue books or borrowing limits.");
+        }
+
         Book book = bookRepository.findById(saveRequestDto.bookId())
                 .orElseThrow(() -> new InvalidBookIdException(saveRequestDto.bookId()));
-
-        if (!user.getActive()) {
-            logHelper.warn("Inactive user attempted to borrow. userId={}", user.getId());
-            throw new IllegalArgumentException("The user is currently inactive.");
-        }
 
         if (book.getInventoryCount() == null || book.getInventoryCount() <= 0) {
             logHelper.warn("Book out of stock. bookId={}", book.getId());
             throw new IllegalArgumentException("Book stock is insufficient.");
         }
 
-        // borrowing oluşturma(ödünç alma tarihi ve teslim tarihi oluşturulur)
+        // borrowing oluşturma (odunc alma tarihi ve teslim tarihi oluşturulur)
         Borrowing borrowing = new Borrowing();
         borrowing.setBook(book);
         borrowing.setUser(user);
@@ -73,8 +74,8 @@ public class BorrowingService {
         // borrowing kaydetme
         borrowingRepository.save(borrowing);
 
-        // eligibility kontrolü (max 5 kitap veya gecikme kontrolü)
-        userService.checkUserEligibilityAndUpdateStatus(user.getId(), true);
+        // eligibility kontrolü (max 5 kitap veya gecikmis kitap kontrolu)
+        userService.checkUserEligibilityAndUpdateStatus(user.getId());
 
         logHelper.info("Borrowing created successfully. borrowingId={}, userId={}, bookId={}", borrowing.getId(),
                 user.getId(), book.getId());
@@ -83,50 +84,55 @@ public class BorrowingService {
 
     }
 
-
-    public BorrowingDto returnBook(Long borrowingId){
+    public BorrowingDto returnBook(Long borrowingId) {
 
         logHelper.info("Return process started. borrowingId={}", borrowingId);
 
-        Borrowing borrowing = borrowingRepository.findById(borrowingId)
-                .orElseThrow(() -> new EntityNotFoundException("There is no borrowing record for the given  ID: " + borrowingId));
+        final Borrowing borrowing = borrowingRepository.findById(borrowingId)
+                .orElseThrow(() -> new EntityNotFoundException("There is no borrowing record for the given ID: " + borrowingId));
 
         if (borrowing.getStatus() == RETURNED) {
             logHelper.warn("Return attempted for already returned book. borrowingId={}", borrowingId);
             throw new IllegalStateException("This book has already been returned.");
         }
+
         borrowing.setStatus(RETURNED);
         borrowing.setReturnDate(LocalDate.now());
 
-        Book book = borrowing.getBook();
+        final Book book = borrowing.getBook();
         book.setInventoryCount(book.getInventoryCount() + 1);
 
         bookRepository.save(book);
         borrowingRepository.save(borrowing);
+
+        userService.checkUserEligibilityAndUpdateStatus(borrowing.getUser().getId());
+
         logHelper.info("Return successful. borrowingId={}", borrowingId);
 
         return borrowingMapper.toBorrowingDto(borrowing);
     }
 
-
     public List<BorrowingDto> getMyBorrowingHistory() {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         logHelper.debug("Fetching borrowing list from DB for username: {}", username);
 
-        List<Borrowing> borrowingList = borrowingRepository.findAllByUserUsername(username);
+        final List<Borrowing> borrowingList = borrowingRepository.findAllByUserUsername(username);
         return borrowingMapper.toBorrowingDtoList(borrowingList);
     }
 
-
     public List<BorrowingDto> getAllBorrowingHistory() {
+
         logHelper.debug("Retrieving all borrowings from DB");
-        List<Borrowing> borrowings = borrowingRepository.findAll();
+        final List<Borrowing> borrowings = borrowingRepository.findAll();
         return borrowingMapper.toBorrowingDtoList(borrowings);
     }
 
+    public List<BorrowingDto> getBorrowingsByStatus(BorrowingStatusEnum status) {
+        return borrowingMapper.toBorrowingDtoList(borrowingRepository.findByStatus(status));
+    }
 
-    public List<BorrowingDto> getOverdueBorrowings() {
+    public List<BorrowingDto> getAndUpdateOverdueBorrowings() {
 
         logHelper.info("Checking for overdue borrowings");
         LocalDate today = LocalDate.now();
@@ -143,9 +149,9 @@ public class BorrowingService {
         return borrowingMapper.toBorrowingDtoList(overdueList);
     }
 
-
     public String generateOverdueReport() {
-        List<BorrowingDto> overdueList = getOverdueBorrowings();
+
+       final List<BorrowingDto> overdueList = getAndUpdateOverdueBorrowings();
 
         int totalBooks = (int) bookRepository.count();
         int totalBorrowed = borrowingRepository.countByStatus(BORROWED);
@@ -182,5 +188,4 @@ public class BorrowingService {
                 overdueList.size());
         return reportBuilder.toString();
     }
-
 }

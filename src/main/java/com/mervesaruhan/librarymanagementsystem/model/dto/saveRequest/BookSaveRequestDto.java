@@ -6,38 +6,38 @@ import java.time.LocalDate;
 
 public record BookSaveRequestDto(
 
-        @NotBlank(message =  "Başlık boş olamaz.")
-        @Size(max = 250, min=2, message = "Kitap başlığı en az 2, en fazla 250 karakter olmalıdır.")
+        @NotBlank(message =  "Title cannot be blank.")
+        @Size(max = 250, min = 2, message = "Book title must be between 2 and 250 characters.")
         String title,
 
-        @NotBlank(message =  "Yazar bilgisi boş olamaz.")
-        @Size(max = 250, min=2, message = "Yazar bilgisi en az 2, en fazla 250 karakter olmalıdır.")
+        @NotBlank(message = "Author information cannot be blank.")
+        @Size(max = 250, min=2, message = "message = \"Author information cannot be blank.")
         String author,
 
-        @NotBlank(message =  "ISBN boş olamaz.")
-        @Size(max = 11, min=11, message = "ISBN  11 karakter olmalıdır.")
+        @NotBlank(message =  "ISBN cannot be blank.")
+        @Size(max = 11, min=11, message = "ISBN must be exactly 11 characters.")
         String isbn,
 
         @NotNull(message =  "Yayın tarihi boş olamaz.")
         @PastOrPresent(message = "Yayın tarihi geçmiş veya bugün olmalıdır")
         LocalDate publishedDate,
 
-        @NotBlank(message =  "Yayınevi bilgisi boş olamaz.")
-        @Size(max = 250, min=2, message = "Yayınevi bilgisi en az 2, en fazla 250 karakter olmalıdır.")
+        @NotBlank(message =  "Publication date cannot be null.")
+        @Size(max = 250, min=2, message = "Publisher information must be between 2 and 250 characters.")
         String publisher,
 
-        @NotBlank(message =  "Tür bilgisi boş olamaz.")
-        @Size(max = 100, min=2, message = "Tür bilgisi en az 2, en fazla 100 karakter olmalıdır.")
+        @NotBlank(message =  "Genre cannot be blank.")
+        @Size(max = 100, min=2, message = "Genre must be between 2 and 100 characters.")
         String genre,
 
         String description,
 
-        @NotNull(message =  "Sayfa sayısı boş olamaz.")
-        @Positive(message =  "Sayfa sayısı sıfırdan büyük olmalı.")
+        @NotNull(message =  "Page count cannot be null.")
+        @Positive(message =  "Page count must be greater than zero.")
         Integer pageCount,
 
-        @NotNull(message =  "Envanter bilgisi boş olamaz.")
-        @Min(value = 1, message = "Envanter değeri sıfırdan büyük olmalı")
+        @NotNull(message =  "Inventory count cannot be null.")
+        @Min(value = 1, message = "Inventory count must be greater than zero")
         Integer inventoryCount
 
 
