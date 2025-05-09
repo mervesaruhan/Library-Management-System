@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -43,14 +44,14 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler)
                 )
-                .headers(header -> header.frameOptions(frameOptions -> frameOptions.sameOrigin()))
-                .csrf(AbstractHttpConfigurer::disable)
+                .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**").disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login","/auth/register").permitAll() //  Allow public access to login
+                        .requestMatchers("/auth/login","/auth/register","/api/v1/booksAvailability").permitAll() //  Allow public access to login
                         .requestMatchers("/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/h2-console/**").permitAll() //  Allow public access to swagger
+                                "/h2-console/**","/api/v1/booksAvailability").permitAll() //  Allow public access to swagger
                         .anyRequest().authenticated() // 🔒 Secure all other endpoints
                         //.anyRequest().permitAll()
                 )
@@ -77,7 +78,8 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/auth/login",
                         "/auth/register",
-                        "/h-2 console/**"
+                        "/h2-console/**",
+                        "/api/v1/booksAvailability"
                 );
     }
 }

@@ -122,15 +122,15 @@ public class UserService {
 
     public boolean isUserEligible(Long userId) {
 
-        User user = userRepository.findById(userId)
+        final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new InvalidUserIdException(userId));
 
-        List<Borrowing> activeBorrowings = user.getBorrowedList().stream()
+        final List<Borrowing> activeBorrowings = user.getBorrowedList().stream()
                 .filter(b -> b.getReturnDate() == null)
                 .toList();
 
-        boolean hasMoreThanFiveBooks = activeBorrowings.size() >= 5;
-        boolean hasOverdue = activeBorrowings.stream()
+        final boolean hasMoreThanFiveBooks = activeBorrowings.size() >= 5;
+        final boolean hasOverdue = activeBorrowings.stream()
                 .anyMatch(b -> b.getDueDate().isBefore(LocalDate.now()));
 
         return !(hasMoreThanFiveBooks || hasOverdue);
@@ -141,12 +141,12 @@ public class UserService {
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new InvalidUserIdException(userId));
 
-        boolean expectedStatus = isUserEligible(userId);
+        final boolean expectedStatus = isUserEligible(userId);
 
-        if (expectedStatus != Boolean.TRUE.equals(user.getActive())) {
+        if (expectedStatus != user.getActive()) {
             user.setActive(expectedStatus);
             userRepository.save(user);
-            String status = expectedStatus ? "active" : "passive";
+            final String status = expectedStatus ? "active" : "passive";
             logHelper.info("User {} status updated to {}", userId, status);
         } else {
             logHelper.debug("User {} status already correct.", userId);
@@ -156,7 +156,7 @@ public class UserService {
     }
 
     public void deleteUser(Long id){
-        User user = userRepository.findById(id)
+        final User user = userRepository.findById(id)
                 .orElseThrow(() -> new InvalidUserIdException(id));
         if(user.getActive()){
             logHelper.warn("Attempted to delete active user. ID: {}", id);

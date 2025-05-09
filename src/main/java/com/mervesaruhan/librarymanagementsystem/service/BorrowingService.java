@@ -1,5 +1,6 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
+import com.mervesaruhan.librarymanagementsystem.ReactivePrograming.BookReactiveService;
 import com.mervesaruhan.librarymanagementsystem.model.enums.BorrowingStatusEnum;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
@@ -33,17 +34,18 @@ public class BorrowingService {
     private final BorrowingRepository borrowingRepository;
     private final BorrowingMapper borrowingMapper;
     private final UserService userService;
+    private final BookReactiveService bookReactiveService;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final LogHelper logHelper;
 
 
-    public BorrowingDto saveBorrowing(BorrowingSaveRequestDto saveRequestDto){
+    public BorrowingDto saveBorrowing(BorrowingSaveRequestDto saveRequestDto) {
 
         logHelper.info("Creating borrowing: userId={}, bookId={}", saveRequestDto.userId(), saveRequestDto.bookId());
 
         //Kullanıcı  ve kitap kontrolu (id ve müsaitlik kontolu)
-        User user = userRepository.findById(saveRequestDto.userId())
+        final User user = userRepository.findById(saveRequestDto.userId())
                 .orElseThrow(() -> new InvalidUserIdException(saveRequestDto.userId()));
 
         if (!userService.isUserEligible(user.getId())) {
@@ -51,7 +53,7 @@ public class BorrowingService {
             throw new IllegalArgumentException("User is not eligible to borrow due to overdue books or borrowing limits.");
         }
 
-        Book book = bookRepository.findById(saveRequestDto.bookId())
+        final Book book = bookRepository.findById(saveRequestDto.bookId())
                 .orElseThrow(() -> new InvalidBookIdException(saveRequestDto.bookId()));
 
         if (book.getInventoryCount() == null || book.getInventoryCount() <= 0) {
@@ -60,7 +62,7 @@ public class BorrowingService {
         }
 
         // borrowing oluşturma (odunc alma tarihi ve teslim tarihi oluşturulur)
-        Borrowing borrowing = new Borrowing();
+        final Borrowing borrowing = new Borrowing();
         borrowing.setBook(book);
         borrowing.setUser(user);
         borrowing.setBorrowDate(LocalDate.now());
@@ -69,10 +71,12 @@ public class BorrowingService {
 
         //book envanteri güncelleme
         book.setInventoryCount(book.getInventoryCount() - 1);
+
         bookRepository.save(book);
 
         // borrowing kaydetme
         borrowingRepository.save(borrowing);
+
 
         // eligibility kontrolü (max 5 kitap veya gecikmis kitap kontrolu)
         userService.checkUserEligibilityAndUpdateStatus(user.getId());
@@ -80,6 +84,7 @@ public class BorrowingService {
         logHelper.info("Borrowing created successfully. borrowingId={}, userId={}, bookId={}", borrowing.getId(),
                 user.getId(), book.getId());
 
+        bookReactiveService.updateInventoryCountById(book.getId(), book.getInventoryCount());
         return borrowingMapper.toBorrowingDto(borrowing);
 
     }
@@ -108,6 +113,7 @@ public class BorrowingService {
         userService.checkUserEligibilityAndUpdateStatus(borrowing.getUser().getId());
 
         logHelper.info("Return successful. borrowingId={}", borrowingId);
+        bookReactiveService.updateInventoryCountById(book.getId(), book.getInventoryCount());
 
         return borrowingMapper.toBorrowingDto(borrowing);
     }
@@ -151,23 +157,23 @@ public class BorrowingService {
 
     public String generateOverdueReport() {
 
-       final List<BorrowingDto> overdueList = getAndUpdateOverdueBorrowings();
+        final List<BorrowingDto> overdueList = getAndUpdateOverdueBorrowings();
 
-        int totalBooks = (int) bookRepository.count();
-        int totalBorrowed = borrowingRepository.countByStatus(BORROWED);
-        int totalReturned = borrowingRepository.countByStatus(RETURNED);
-        int totalOverdue = borrowingRepository.countByStatus(OVERDUE);
+        final int totalBooks = (int) bookRepository.count();
+        final int totalBorrowed = borrowingRepository.countByStatus(BORROWED);
+        final int totalReturned = borrowingRepository.countByStatus(RETURNED);
+        final int totalOverdue = borrowingRepository.countByStatus(OVERDUE);
 
-        StringBuilder reportBuilder = new StringBuilder();
+        final StringBuilder reportBuilder = new StringBuilder();
 
         reportBuilder.append("""
-            📚 LIBRARY OVERDUE REPORT
-            --------------------------
-            Total Books        : %d
-            Currently Borrowed : %d
-            Returned           : %d
-            Overdue            : %d
-            """.formatted(totalBooks, totalBorrowed, totalReturned, totalOverdue));
+                📚 LIBRARY OVERDUE REPORT
+                --------------------------
+                Total Books        : %d
+                Currently Borrowed : %d
+                Returned           : %d
+                Overdue            : %d
+                """.formatted(totalBooks, totalBorrowed, totalReturned, totalOverdue));
 
         reportBuilder.append("\n\n Overdue Book Details:\n");
 

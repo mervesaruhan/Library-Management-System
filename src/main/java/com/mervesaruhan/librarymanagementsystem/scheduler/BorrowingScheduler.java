@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.schedular;
+package com.mervesaruhan.librarymanagementsystem.scheduler;
 
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BorrowingDto;
 import com.mervesaruhan.librarymanagementsystem.service.BorrowingService;

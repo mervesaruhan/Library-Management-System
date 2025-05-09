@@ -1,11 +1,14 @@
 package com.mervesaruhan.librarymanagementsystem.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mervesaruhan.librarymanagementsystem.LibraryManagementSystemApplication;
 import com.mervesaruhan.librarymanagementsystem.general.TestConstants;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,25 +20,34 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {LibraryManagementSystemApplication.class})
 @ActiveProfiles("test")
-class BookControllerIntegrationTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class BookIntegrationTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
+    private WebApplicationContext context;
     private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
+        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    }
 
     @Test
     @WithMockUser(roles = "LIBRARIAN")
+    @Order(1)
     void shouldSaveBook() throws Exception {
         BookSaveRequestDto request = new BookSaveRequestDto(
                 "Clean Code",
@@ -62,6 +74,7 @@ class BookControllerIntegrationTest {
 
     @Test
     @WithMockUser(roles = "LIBRARIAN")
+    @Order(2)
     void shouldGetAllBooks() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/books")
@@ -75,6 +88,8 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
+    @Order(3)
     void shouldGetBookById() throws Exception {
         Long bookId = TestConstants.TEST_BOOK_ID;
 
@@ -90,8 +105,10 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "PATRON")
+    @Order(4)
     void shouldSearchBooks() throws Exception {
-        String keyword = "kitap";
+        String keyword = "Code";
         String field = "TITLE"; // Enum olduğundan kullanılabilir bir değer verilmeli
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -109,6 +126,8 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
+    @Order(5)
     void shouldGetBooksByAvailability() throws Exception {
         int count = 1;
 
@@ -131,6 +150,8 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
+    @Order(6)
     void shouldUpdateBookInventoryCount() throws Exception {
         Long bookId = 1L;
         Integer count = 5;
@@ -146,6 +167,8 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
+    @Order(7)
     void shouldUpdateBook() throws Exception {
         Long bookId = 1L;
         String request = """
