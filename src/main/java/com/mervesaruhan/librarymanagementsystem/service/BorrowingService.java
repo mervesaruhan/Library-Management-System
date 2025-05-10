@@ -127,6 +127,17 @@ public class BorrowingService {
         return borrowingMapper.toBorrowingDtoList(borrowingList);
     }
 
+    public BorrowingDto updateDueDate(Long borrowingId, LocalDate dueDate) {
+        final Borrowing borrowing = borrowingRepository.findById(borrowingId)
+                .orElseThrow(() -> new EntityNotFoundException("There is no borrowing record for the given ID: " + borrowingId));
+
+        borrowing.setDueDate(dueDate);
+        borrowingRepository.save(borrowing);
+        userService.checkUserEligibilityAndUpdateStatus(borrowing.getUser().getId());
+        return borrowingMapper.toBorrowingDto(borrowing);
+    }
+
+
     public List<BorrowingDto> getAllBorrowingHistory() {
 
         logHelper.debug("Retrieving all borrowings from DB");
@@ -178,7 +189,7 @@ public class BorrowingService {
         reportBuilder.append("\n\n Overdue Book Details:\n");
 
         overdueList.forEach(b -> reportBuilder.append(String.format(
-                " - Book: %s [Book ID: %d] | Borrowed by: %s [User ID: %d] | Due: %s\n",
+                " - Book: %s [Book ID: %s] | Borrowed by: %s [User ID: %s] | Due: %s\n",
                 b.bookTitle(),
                 b.bookId(),
                 b.userFullName(),

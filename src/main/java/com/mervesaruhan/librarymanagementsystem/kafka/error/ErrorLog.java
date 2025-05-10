@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "Error_Log")
+@Table(name = "error_log")
 public class ErrorLog {
 
     @Id

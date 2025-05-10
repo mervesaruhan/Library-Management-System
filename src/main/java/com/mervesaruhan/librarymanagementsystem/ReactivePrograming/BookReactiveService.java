@@ -33,11 +33,9 @@ public class BookReactiveService {
     public Flux<List<BookAvailabilityDto>> getAllBooks() {
         logHelper.info("getAllBooks");
 
-        // Veriyi sürekli olarak yaymak için interval kullanıyoruz
-        return Flux.interval(Duration.ofSeconds(1))  // her 1 saniyede bir yeni veri
+        return Flux.interval(Duration.ofSeconds(5))
                 .map(i -> {
-                    // Tüm kitapları bir liste halinde döndür
-                    return new ArrayList<>(bookStorage);  // bookStorage'yı bir liste olarak döndür
+                    return new ArrayList<>(bookStorage);
                 });
     }
 

@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**").disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login","/auth/register","/api/v1/booksAvailability").permitAll() //  Allow public access to login
+                        .requestMatchers("/auth/login","/auth/register").permitAll() //  Allow public access to login
                         .requestMatchers("/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/h2-console/**","/api/v1/booksAvailability").permitAll() //  Allow public access to swagger
@@ -78,8 +78,7 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/auth/login",
                         "/auth/register",
-                        "/h2-console/**",
-                        "/api/v1/booksAvailability"
+                        "/h2-console/**"
                 );
     }
 }

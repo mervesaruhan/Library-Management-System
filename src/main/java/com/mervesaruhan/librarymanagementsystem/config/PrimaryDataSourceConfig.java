@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@Profile("!test")
+//@Profile("!test")
 @EnableJpaRepositories(
         basePackages = "com.mervesaruhan.librarymanagementsystem.repository",
         entityManagerFactoryRef = "primaryEntityManagerFactory",

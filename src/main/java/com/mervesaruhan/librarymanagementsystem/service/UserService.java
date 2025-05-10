@@ -95,11 +95,12 @@ public class UserService {
         }
         final User user = userRepository.findUserById(id);
 
-        if(!passwordUpdateDto.currentPassword().equals(user.getPassword())){
+        if (!passwordEncoder.matches(passwordUpdateDto.currentPassword(), user.getPassword())) {
             logHelper.warn("Incorrect current password for user ID: {}", id);
             throw new IllegalArgumentException("Incorrect password.");
         }
-        if(passwordUpdateDto.newPassword().equals(user.getPassword())){
+
+        if (passwordUpdateDto.newPassword().equals(passwordUpdateDto.currentPassword())) {
             logHelper.warn("New password matches current password. ID: {}", id);
             throw new IllegalArgumentException("Please choose a new password different from your current one.");
         }
@@ -107,6 +108,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(passwordUpdateDto.newPassword()));
         userRepository.save(user);
         logHelper.info("Password updated successfully for user ID: {}", id);
+
         return userMapper.toUserDto(user);
     }
 
@@ -152,6 +154,15 @@ public class UserService {
             logHelper.debug("User {} status already correct.", userId);
         }
 
+        return userMapper.toUserDto(user);
+    }
+
+    public UserDto updateUserEligibility(Long id, Boolean eligibility) {
+        final User user = userRepository.findById(id)
+                .orElseThrow(()-> new InvalidUserIdException(id));
+        user.setActive(eligibility);
+        userRepository.save(user);
+        logHelper.info("User {} eligibility updated to {}", user.getId(), eligibility);
         return userMapper.toUserDto(user);
     }
 

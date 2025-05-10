@@ -81,8 +81,15 @@ public class UserController {
             summary = "Evaluate and update user's active status based on borrowing rules.- ROLE: LIBRARIAN",
             description = "Automatically sets user to passive if rule violation is found."
     )
-    public ResponseEntity<RestResponse<UserDto>> updateUserActiveStatus(@PathVariable Long id){
+    public ResponseEntity<RestResponse<UserDto>> checkAndUpdateUserActiveStatus(@PathVariable Long id){
         return ResponseEntity.ok(RestResponse.of(userService.checkUserEligibilityAndUpdateStatus(id)));
+    }
+
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PutMapping("/{id}/eligibility")
+    @Operation(summary = "Change user eligibility.- ROLE: LIBRARIAN")
+    public ResponseEntity<RestResponse<UserDto>> updateUserActiveStatus(@PathVariable Long id,@RequestParam Boolean eligibility){
+        return ResponseEntity.ok(RestResponse.of(userService.updateUserEligibility(id, eligibility)));
     }
 
     @PreAuthorize("hasRole('LIBRARIAN')")

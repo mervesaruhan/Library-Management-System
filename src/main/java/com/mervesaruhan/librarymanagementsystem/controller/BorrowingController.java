@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Borrowing Management", description = "Borrowing CRUD operations")
@@ -38,11 +39,18 @@ public class BorrowingController {
                 .body(RestResponse.of(borrowingService.saveBorrowing(requestDto)));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{borrowing_id}")
     @PreAuthorize("hasRole('PATRON')")
     @Operation(summary = "Return operation- ROLE: PATRON")
-    public ResponseEntity<RestResponse<BorrowingDto>> returnBorrowing(@PathVariable long id) {
-        return ResponseEntity.ok(RestResponse.of(borrowingService.returnBook(id)));
+    public ResponseEntity<RestResponse<BorrowingDto>> returnBorrowing(@PathVariable long borrowing_id) {
+        return ResponseEntity.ok(RestResponse.of(borrowingService.returnBook(borrowing_id)));
+    }
+
+    @PutMapping("/updateDueDate/{borrowing_id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @Operation(summary = "Update Due Date- ROLE: LIBRARIAN")
+    public ResponseEntity<RestResponse<BorrowingDto>> updateDueDate(@PathVariable long borrowing_id, LocalDate dueDate) {
+        return ResponseEntity.ok(RestResponse.of(borrowingService.updateDueDate(borrowing_id, dueDate)));
     }
 
 
