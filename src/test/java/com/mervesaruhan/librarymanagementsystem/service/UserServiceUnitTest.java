@@ -61,6 +61,7 @@ class UserServiceUnitTest {
         userLibrarian = UserTestDataGenerator.createUserLibrarian();
         userDto = UserTestDataGenerator.createUserDto();
 
+
     }
 
     @Test
@@ -230,6 +231,12 @@ class UserServiceUnitTest {
 
         when(userRepository.existsById(userId)).thenReturn(true);
         when(userRepository.findUserById(userId)).thenReturn(userLibrarian);
+
+        when(passwordEncoder.matches(passwordUpdateDto.currentPassword(), userLibrarian.getPassword()))
+                .thenReturn(true);
+        when(passwordEncoder.encode(passwordUpdateDto.newPassword()))
+                .thenReturn("encoded-new-password");
+
         when(userRepository.save(userLibrarian)).thenReturn(userLibrarian);
         when(userMapper.toUserDto(userLibrarian)).thenReturn(userDto);
 
@@ -257,16 +264,20 @@ class UserServiceUnitTest {
     void shouldThrowExceptionWhenNewPasswordIsSameAsOldForUpdate() {
         Long userId = TestConstants.TEST_USER_ID;
         String currentPassword = TestConstants.TEST_USER_PASSWORD;
-        UserPasswordUpdateRequestDto passwordUpdateDto = new UserPasswordUpdateRequestDto(currentPassword, currentPassword);
+
+        UserPasswordUpdateRequestDto passwordUpdateDto =
+                new UserPasswordUpdateRequestDto(currentPassword, currentPassword);
 
         when(userRepository.existsById(userId)).thenReturn(true);
         when(userRepository.findUserById(userId)).thenReturn(userLibrarian);
+
+        when(passwordEncoder.matches(currentPassword, userLibrarian.getPassword()))
+                .thenReturn(true);
 
         assertThatThrownBy(() -> userService.updateUserPassword(userId, passwordUpdateDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Please choose a new password different from your current one.");
     }
-
     @Test
     void shouldUpdateUserRoleSuccessfully() {
         Long userId = 1L;
@@ -318,6 +329,7 @@ class UserServiceUnitTest {
         verify(userRepository).save(user);
         verify(userMapper).toUserDto(user);
     }
+
 
 
     @Test
@@ -380,7 +392,7 @@ class UserServiceUnitTest {
                 expectedDto.email(),
                 expectedDto.username(),
                 expectedDto.role(),
-                false, // gecikmeden dolayı otomatik pasif
+                false,
                 expectedDto.borrowedList()
         );
 
@@ -399,13 +411,12 @@ class UserServiceUnitTest {
 
     @Test
     void shouldThrowExceptionWhenTryingToDeleteActiveUser() {
-        // Arrange
+
         Long userId = 1L;
         userLibrarian.setActive(true);
 
         when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(userLibrarian));
 
-        // Act & Assert
         assertThatThrownBy(() -> userService.deleteUser(userId))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("You cannot delete a user while they are active");

@@ -1,6 +1,7 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
 
+import com.mervesaruhan.librarymanagementsystem.ReactivePrograming.BookReactiveService;
 import com.mervesaruhan.librarymanagementsystem.general.BookTestDataGenerator;
 import com.mervesaruhan.librarymanagementsystem.general.BorrowingTestDataGenerator;
 import com.mervesaruhan.librarymanagementsystem.general.TestConstants;
@@ -50,6 +51,9 @@ class BorrowingServiceUnitTest {
 
     @Mock
     private BorrowingRepository borrowingRepository;
+
+    @Mock
+    private BookReactiveService bookReactiveService;
 
     @Mock
     private BorrowingMapper borrowingMapper;
@@ -229,6 +233,36 @@ class BorrowingServiceUnitTest {
         assertThat(result).hasSize(1).containsExactly(borrowingDto);
         verify(borrowingRepository).findAll();
         verify(borrowingMapper).toBorrowingDtoList(borrowingList);
+    }
+
+    @Test
+    void shouldUpdateDueDateSuccessfully() {
+        // given
+        Long borrowingId = 1L;
+        LocalDate newDueDate = LocalDate.now().plusDays(10);
+
+        User user = UserTestDataGenerator.createUserPatron();
+        Borrowing borrowing = BorrowingTestDataGenerator.createBorrowing();
+        borrowing.setUser(user);
+
+        BorrowingDto borrowingDto = BorrowingTestDataGenerator.createBorrowingBookDto();
+
+        // stubbing
+        when(borrowingRepository.findById(borrowingId)).thenReturn(Optional.of(borrowing));
+        when(borrowingRepository.save(borrowing)).thenReturn(borrowing);
+        when(borrowingMapper.toBorrowingDto(borrowing)).thenReturn(borrowingDto);
+        when(userService.checkUserEligibilityAndUpdateStatus(user.getId())).thenReturn(UserTestDataGenerator.createUserDto());
+
+        // when
+        BorrowingDto result = borrowingService.updateDueDate(borrowingId, newDueDate);
+
+        // then
+        assertThat(borrowing.getDueDate()).isEqualTo(newDueDate);
+        assertThat(result).isEqualTo(borrowingDto);
+
+        verify(borrowingRepository).save(borrowing);
+        verify(userService).checkUserEligibilityAndUpdateStatus(user.getId());
+        verify(borrowingMapper).toBorrowingDto(borrowing);
     }
 
     @Test

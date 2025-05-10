@@ -1,32 +1,38 @@
 package com.mervesaruhan.librarymanagementsystem.service;
 
 
+import com.mervesaruhan.librarymanagementsystem.general.BookTestDataGenerator;
 import com.mervesaruhan.librarymanagementsystem.model.dto.response.BookDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.BookSaveRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.BookUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Book;
+import com.mervesaruhan.librarymanagementsystem.model.enums.BookSearchField;
 import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.BookMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.BookRepository;
-import com.mervesaruhan.librarymanagementsystem.general.BookTestDataGenerator;
+import org.mockito.quality.Strictness;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.data.domain.*;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class BookServiceUnitTest {
 
     @Mock
@@ -48,6 +54,7 @@ class BookServiceUnitTest {
     void setUp() {
         book = BookTestDataGenerator.createBook();
         bookDto = BookTestDataGenerator.createBookDto();
+
     }
 
     @Test
@@ -152,6 +159,54 @@ class BookServiceUnitTest {
 
         verify(bookRepository).findBooksByInventoryCountGreaterThan(0, pageable);
         verify(bookMapper).toBookDto(book);
+    }
+
+    @Test
+    void shouldSearchBooksByTitleSuccessfully() {
+        String keyword = "java";
+        Pageable pageable = PageRequest.of(0, 10);
+        BookSearchField field = BookSearchField.TITLE;
+
+        Book book = BookTestDataGenerator.createBook();
+        BookDto bookDto = BookTestDataGenerator.createBookDto();
+
+        Page<Book> bookPage = new PageImpl<>(List.of(book));
+
+        when(bookRepository.findByTitleContainingIgnoreCase(keyword, pageable)).thenReturn(bookPage);
+        when(bookMapper.toBookDto(book)).thenReturn(bookDto);
+        doNothing().when(logHelper).info(anyString(), (Object[]) any());
+
+        Page<BookDto> result = bookService.searchBooks(keyword, pageable, field);
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0)).isEqualTo(bookDto);
+
+        verify(bookRepository).findByTitleContainingIgnoreCase(keyword, pageable);
+        verify(bookMapper).toBookDto(book);
+        verify(logHelper).info(
+                eq("Searching books with keyword: {}, field: {}"),
+                eq("java"),
+                eq(BookSearchField.TITLE)
+        );
+    }
+
+    @Test
+    void shouldThrowExceptionWhenNoBooksFound() {
+        String keyword = "unknown";
+        Pageable pageable = PageRequest.of(0, 10);
+        BookSearchField field = BookSearchField.AUTHOR;
+
+        Page<Book> emptyPage = Page.empty(pageable);
+
+        when(bookRepository.findByAuthorContainingIgnoreCase(keyword, pageable)).thenReturn(emptyPage);
+        doNothing().when(logHelper).info(anyString(), (Object[]) any());
+        doNothing().when(logHelper).warn(anyString(), (Object[]) any());
+
+        assertThatThrownBy(() -> bookService.searchBooks(keyword, pageable, field))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("No books found for the given keyword");
+
+        verify(logHelper).warn(anyString(), (Object[]) any());
     }
 
 

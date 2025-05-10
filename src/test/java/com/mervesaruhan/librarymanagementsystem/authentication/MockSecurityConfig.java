@@ -31,11 +31,6 @@ public class MockSecurityConfig {
         return Mockito.mock(JwtUtil.class);
     }
 
-//    @Bean
-//    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-//        return Mockito.mock(JwtAuthenticationFilter.class);
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return Mockito.mock(PasswordEncoder.class);

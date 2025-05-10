@@ -32,7 +32,6 @@ class UserControllerSecurityTest {
 
 
 
-    // LIBRARIAN pasif kullanıcıyı silebilmeli
     @Test
     void librarianCanDeletePassiveUser() throws Exception {
         Mockito.doNothing().when(userService).deleteUser(1L);
@@ -44,7 +43,6 @@ class UserControllerSecurityTest {
     }
 
 
-    // PATRON silme işlemine erişememeli
     @Test
     @WithMockUser(username = "patron", roles = {"PATRON"})
     void patronCannotDeleteUser() throws Exception {
@@ -53,7 +51,6 @@ class UserControllerSecurityTest {
     }
 
 
-    // LIBRARIAN aktif kullanıcı silmeye çalışırsa 409 almalı
     @Test
     void cannotDeleteActiveUser_shouldReturnConflict() throws Exception {
         Mockito.doThrow(new IllegalStateException("You cannot delete a user while they are active. Please passive the user before attempting deletion"))
@@ -65,7 +62,7 @@ class UserControllerSecurityTest {
                 .andExpect(status().isConflict());
     }
 
-    // Geçersiz ID için 404
+
     @Test
     void deleteUser_invalidId_shouldReturnNotFound() throws Exception {
         Mockito.doThrow(new InvalidUserIdException())

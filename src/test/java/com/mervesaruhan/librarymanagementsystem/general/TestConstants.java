@@ -27,7 +27,7 @@ public class TestConstants {
     public static final String TEST_USER_SURNAME = "Test Surname";
     public static final String TEST_USER_FULLNAME = TEST_USER_NAME + " " + TEST_USER_SURNAME;
     public static final String TEST_UPDATED_USER_FULLNAME = TEST_UPDATED_USER_NAME + " " + TEST_USER_SURNAME;
-    public static final String TEST_USER_EMAIL = "Test Email";
+    public static final String TEST_USER_EMAIL = "testemail@gmail.com";
     public static final String TEST_USER_PHONE = "05556667788";
     public static final String TEST_USER_USERNAME = "Test Username";
     public static final String TEST_USER_PASSWORD = "Test Password";
