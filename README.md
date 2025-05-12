@@ -1,4 +1,4 @@
-
+![flow chart](https://github.com/user-attachments/assets/93ba83e1-4eac-42b2-8fa3-7117eb19a615)
 # 📚 Library Management System
 
 ## 🔖 Project Overview & Features
@@ -7,7 +7,8 @@ This is a comprehensive **Library Management System** developed using Java 21 an
 ---
 
 ## 🔁 System Flow Diagram
-![System Flow Diagram](assets/akıs diagram.jpg)
+
+![flow chart](https://github.com/user-attachments/assets/6b1b89a4-982a-4c4a-987f-ca63499d7c86)
 
 ---
 
@@ -51,8 +52,9 @@ cd Library-Management-System
 docker-compose up --build
 ```
 > PostgreSQL, Kafka, and the application will be launched in containers.
+![docker](https://github.com/user-attachments/assets/afff6fba-aeb3-46ad-abce-d90ea74d5e7f)
 
-![Docker Screenshot](assets/docker.png)
+
 
 ---
 
@@ -67,7 +69,7 @@ docker-compose up --build
 - Controller-level access control via `@PreAuthorize`
 - Token authentication can be tested through Swagger UI
 
-![JWT Token Swagger](assets/sw2.png)
+
 
 ---
 
@@ -77,7 +79,7 @@ docker-compose up --build
 - Pagination and sorting support
 - Stock tracking using `inventoryCount`; availability also tracked in real-time via WebFlux
 
-![Book Endpoints](assets/sw3.png)
+
 
 ---
 
@@ -89,7 +91,7 @@ docker-compose up --build
 - If a user has at least 1 overdue book or already has 5 books borrowed → user becomes `inactive`
 - Active users (`active=true`) cannot be deleted
 
-![Borrowing Endpoints](assets/sw4.png)
+
 
 ---
 
@@ -99,10 +101,13 @@ docker-compose up --build
 - Role-based security tests
 
 **Integration Test Coverage:**
-![Integration Coverage](assets/all uIntegrationTest.png)
+
+![Integration Tests Coverage](https://github.com/user-attachments/assets/e490889f-1185-4759-8310-5bad32409bdc)
+
 
 **Unit Test Coverage:**
-![Unit Coverage](assets/all unitTest.png)
+
+![Unit Tests Coverage](https://github.com/user-attachments/assets/34879cb5-2c66-47af-b606-a3cd67df6bcb)
 
 ---
 
@@ -124,6 +129,10 @@ docker-compose up --build
 ## 🔗 Swagger Documentation
 http://localhost:8080/swagger-ui/index.html
 
+![swagger end points-1](https://github.com/user-attachments/assets/e7640754-e2a0-4aeb-944d-065d1ea9ff71)
+![swagger end points-2](https://github.com/user-attachments/assets/0c28d1c3-e5a2-42f3-aea3-0657cfcec8af)
+![swagger end points-3](https://github.com/user-attachments/assets/3f44673f-929b-4b9e-8385-581cca13234a)
+
 ---
 
 ## 📮 Postman Collection
@@ -134,7 +143,8 @@ http://localhost:8080/swagger-ui/index.html
 ---
 
 ## 🗃️ Database Schema
-![Database Schema](assets/sql library db2.png)
+![ER Diagram](https://github.com/user-attachments/assets/43b542cd-89e2-40c7-aa92-f021d9160964)
+
 
 - Relationships between `user`, `book`, and `borrowing` tables
 
