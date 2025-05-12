@@ -141,6 +141,7 @@ http://localhost:8080/swagger-ui/index.html
 - All endpoints grouped by function (Auth, Book, Borrowing, User)
 - Sample requests with JWT tokens
 - File path: `postman/LibraryManagementSystem.postman_collection.json`
+- [Postman collection access lin](https://api.postman.com/collections/32314032-3553d71c-a785-432b-b370-34be7f793e8a?access_key=PMAT-01JV37KR8R7T0Q96DAEW82ANQ4)
 
 ---
 
