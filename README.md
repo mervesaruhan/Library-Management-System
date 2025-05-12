@@ -1,13 +1,14 @@
 
-# 📚 Library Management System
+#  Library Management System
 
 ## 🔖 Project Overview & Features
-This is a comprehensive **Library Management System** developed using Java 21 and Spring Boot 3.1.5. The system supports user registration/login, book search, borrowing/returning, overdue tracking, JWT authentication, role-based access control, Kafka logging, reactive tracking with WebFlux, and Docker deployment.
+This is a comprehensive **Library Management System** developed using Java 21 and Spring Boot 3.4.5. The system supports user registration/login, book search, borrowing/returning, overdue tracking, JWT authentication, role-based access control, Kafka logging, reactive tracking with WebFlux, and Docker deployment.
 
 ---
 
 ## 🔁 System Flow Diagram
-![System Flow Diagram](assets/akıs diagram.jpg)
+
+![flow chart](https://github.com/user-attachments/assets/6b1b89a4-982a-4c4a-987f-ca63499d7c86)
 
 ---
 
@@ -51,12 +52,13 @@ cd Library-Management-System
 docker-compose up --build
 ```
 > PostgreSQL, Kafka, and the application will be launched in containers.
+![docker](https://github.com/user-attachments/assets/afff6fba-aeb3-46ad-abce-d90ea74d5e7f)
 
-![Docker Screenshot](assets/docker.png)
+
 
 ---
 
-## 🧩 Key Features
+##  Key Features
 
 ### 👥 Authentication & Role-Based Authorization
 - Login with JWT token
@@ -67,17 +69,17 @@ docker-compose up --build
 - Controller-level access control via `@PreAuthorize`
 - Token authentication can be tested through Swagger UI
 
-![JWT Token Swagger](assets/sw2.png)
+
 
 ---
 
-### 📚 Book Management (LIBRARIAN)
+### 📚 Book Management 
 - Add, update, delete books
 - Search/filter by title, author, genre, or ISBN
 - Pagination and sorting support
 - Stock tracking using `inventoryCount`; availability also tracked in real-time via WebFlux
 
-![Book Endpoints](assets/sw3.png)
+
 
 ---
 
@@ -89,20 +91,23 @@ docker-compose up --build
 - If a user has at least 1 overdue book or already has 5 books borrowed → user becomes `inactive`
 - Active users (`active=true`) cannot be deleted
 
-![Borrowing Endpoints](assets/sw4.png)
+
 
 ---
 
 ### 🧪 Testing
 - Unit tests for BookService, UserService, BorrowingService
-- Integration tests for controller layer with DB & JWT
+- Integration tests for controller layer with H2 Database
 - Role-based security tests
 
 **Integration Test Coverage:**
-![Integration Coverage](assets/all uIntegrationTest.png)
+
+![Integration Tests Coverage](https://github.com/user-attachments/assets/e490889f-1185-4759-8310-5bad32409bdc)
+
 
 **Unit Test Coverage:**
-![Unit Coverage](assets/all unitTest.png)
+
+![Unit Tests Coverage](https://github.com/user-attachments/assets/34879cb5-2c66-47af-b606-a3cd67df6bcb)
 
 ---
 
@@ -110,12 +115,14 @@ docker-compose up --build
 - Global exception handling via `@ControllerAdvice`
 - Standardized responses using `RestResponse<T>`
 - Enum-based error messaging with `GeneralErrorMessage`, `ErrorMessage`
+- domain specific exception classes
 
 ---
 
 ### 📦 Kafka Logging Integration
-- Logs generated via `LogHelper` (INFO, ERROR, WARN)
+- Logs generated via `LogHelper` (INFO, ERROR, WARN,DEBUG )
 - Logs sent to `request-log` and `error-log` topics when Kafka is enabled
+- Listening to requests with interceptor
 - Fallback to console logging if Kafka is not used
 - To enable Kafka via Docker, set `logger.kafka.enabled=true` in `application.properties`; set to `false` when running locally without Kafka
 
@@ -123,6 +130,10 @@ docker-compose up --build
 
 ## 🔗 Swagger Documentation
 http://localhost:8080/swagger-ui/index.html
+
+![swagger end points-1](https://github.com/user-attachments/assets/e7640754-e2a0-4aeb-944d-065d1ea9ff71)
+![swagger end points-2](https://github.com/user-attachments/assets/0c28d1c3-e5a2-42f3-aea3-0657cfcec8af)
+![swagger end points-3](https://github.com/user-attachments/assets/3f44673f-929b-4b9e-8385-581cca13234a)
 
 ---
 
@@ -134,7 +145,8 @@ http://localhost:8080/swagger-ui/index.html
 ---
 
 ## 🗃️ Database Schema
-![Database Schema](assets/sql library db2.png)
+![ER Diagram](https://github.com/user-attachments/assets/43b542cd-89e2-40c7-aa92-f021d9160964)
+
 
 - Relationships between `user`, `book`, and `borrowing` tables
 
