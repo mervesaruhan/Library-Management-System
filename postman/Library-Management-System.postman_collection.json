@@ -1,0 +1,4974 @@
+{
+	"info": {
+		"_postman_id": "3553d71c-a785-432b-b370-34be7f793e8a",
+		"name": "Library-Management-System",
+		"description": "## **Library Management System – Postman Collection Overview**\n\nThis Postman collection is designed for testing and documenting the RESTful API of the **Library Management System**, developed using:\n\n- **Spring Boot 3.4.5**\n    \n- **Java 21**\n    \n- **PostgreSQL**\n    \n\n---\n\n### **Project Purpose**\n\nThis system enables **librarians** to manage:\n\n- Book records\n    \n- User accounts\n    \n- Borrowing and returning operations\n    \n\n---\n\n### **Security**\n\nThe API implements **user authentication** and **role-based authorization**, supporting two main roles:\n\n- `LIBRARIAN`\n    \n- `PATRON`\n    \n\nAll protected endpoints require a valid **JWT token**.\n\n---\n\n### **Testing & Documentation**\n\nThis collection includes:\n\n- Organized folders by feature (`Authentication`, `Users`, `Books`, `Borrowings, WebFlux`)\n    \n- Sample requests and expected responses\n    \n- Role-specific scenarios\n    \n- Error handling examples\n    \n\n> \n\nToken-based authentication and environment variables (`{{base_url}}`, `{{jwt_token_librarian}}`, etc.) are used throughout the collection for consistency and security.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "32314032"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login-Librarian(static user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"pm.environment.set(\"jwt_token_librarian\", jsonData.data.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": {
+								"algorithm": "HS256",
+								"isSecretBase64Encoded": false,
+								"payload": "{}",
+								"addTokenTo": "header",
+								"headerPrefix": "Bearer",
+								"queryParamKey": "token",
+								"header": "{}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"librarian\",\r\n  \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Register-Patron",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Token</th>\r",
+									"    </tr>\r",
+									"    <tr>\r",
+									"        <td>{{response.data.token}}</td>\r",
+									"    </tr>\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"user\",\r\n  \"surname\": \"user\",\r\n  \"email\": \"user@example.com\",\r\n  \"phone\": \"05999999999\",\r\n  \"username\": \"user1\",\r\n  \"password\": \"user1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/auth/register"
+					},
+					"response": [
+						{
+							"name": "Success 201 - Patron registered",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"user\",\r\n  \"surname\": \"user\",\r\n  \"email\": \"user@example.com\",\r\n  \"phone\": \"05999999999\",\r\n  \"username\": \"user1\",\r\n  \"password\": \"user1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/auth/register"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 10 May 2025 07:50:40 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTc0Njg2MzQ0MCwiZXhwIjoxNzQ2ODY3MDQwfQ.VlpULcFBex78HOTKtMXBbTVuzXIJy7ZwPQPG3EMk9LY\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 10:50:40\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+						},
+						{
+							"name": "400 Bad Request(user name already exixst)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"user\",\r\n  \"surname\": \"user\",\r\n  \"email\": \"user@example.com\",\r\n  \"phone\": \"05999999999\",\r\n  \"username\": \"user1\",\r\n  \"password\": \"user1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/auth/register"
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 10 May 2025 07:53:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T10:53:10.8783414\",\n        \"message\": \"A user with this username already exists. Please create a different username.\",\n        \"description\": \"uri=/auth/register\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 10:53:10\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "Login-Patron(static user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"pm.environment.set(\"jwt_token_patron\", jsonData.data.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": {
+								"algorithm": "HS256",
+								"isSecretBase64Encoded": false,
+								"payload": "{}",
+								"addTokenTo": "header",
+								"headerPrefix": "Bearer",
+								"queryParamKey": "token",
+								"header": "{}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"patron\",\r\n  \"password\": \"password321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login with registered user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"pm.environment.set(\"jwt_token_userFromDb\", jsonData.data.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": {
+								"algorithm": "HS256",
+								"isSecretBase64Encoded": false,
+								"payload": "{}",
+								"addTokenTo": "header",
+								"headerPrefix": "Bearer",
+								"queryParamKey": "token",
+								"header": "{}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"user1\",\r\n  \"password\": \"user1\"\r\n}"
+						},
+						"url": "localhost:8080/auth/login"
+					},
+					"response": [
+						{
+							"name": "200 Ok",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"user1\",\r\n  \"password\": \"newPassword\"\r\n}"
+								},
+								"url": "localhost:8080/auth/login"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 10 May 2025 11:44:35 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTc0Njg3NzQ3NSwiZXhwIjoxNzQ2ODgxMDc1fQ.APRXEBtrcuYpDSU_G70niSVAL1zU41WKiGFGwDd5cwE\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:44:35\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Librarian",
+					"item": [
+						{
+							"name": "Save User",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"merve@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"user2\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"ROLE_LIBRARIAN\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users"
+							},
+							"response": [
+								{
+									"name": "Save User-201 created",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"merve@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"msaruhan\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"ROLE_LIBRARIAN\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users"
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 07:58:24 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 2,\n        \"fullName\": \"merve saruhan\",\n        \"email\": \"merve@example.com\",\n        \"username\": \"msaruhan\",\n        \"role\": \"ROLE_LIBRARIAN\",\n        \"active\": true,\n        \"borrowedList\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 10:58:24\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "Save User- bad request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"merve_example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"msaruhan\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"ROLE_LIBRARIAN\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 07:58:57 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T10:58:57.2188417\",\n        \"message\": \"Validation failed\",\n        \"description\": \"uri=/api/v1/users\",\n        \"errors\": [\n            {\n                \"email\": \"Please enter a valid email address.\"\n            }\n        ]\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 10:58:57\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"merve@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"user2\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"ROLE_LIBRARIAN\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:29:29 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T11:29:29.6331081\",\n        \"message\": \"A user with this username already exists. Please create a different username.\",\n        \"description\": \"uri=/api/v1/users\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:29:29\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"saruhan@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"msaruhan\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"saruhan@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"msaruhan\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/2"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:28:57 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 2,\n        \"fullName\": \"merve saruhan\",\n        \"email\": \"saruhan@example.com\",\n        \"username\": \"msaruhan\",\n        \"role\": \"ROLE_LIBRARIAN\",\n        \"active\": true,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:28:57\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"merve\",\r\n  \"surname\": \"saruhan\",\r\n  \"email\": \"saruhan@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"user1\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/2"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:32:58 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T11:32:58.3209258\",\n        \"message\": \"A user with this username already exists. Please create a different username.\",\n        \"description\": \"uri=/api/v1/users/2\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:32:58\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Get User By Id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users/1"
+							},
+							"response": [
+								{
+									"name": "Get User By Id-200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/1"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:04:37 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"fullName\": \"user user\",\n        \"email\": \"user@example.com\",\n        \"username\": \"user1\",\n        \"role\": \"ROLE_PATRON\",\n        \"active\": true,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:04:37\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "404 Not Found",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/99"
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:06:21 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T11:06:21.7280301\",\n        \"message\": \"User not found with id: 99\",\n        \"description\": \"uri=/api/v1/users/99\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:06:21\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Save User - 2",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"user2\",\r\n  \"surname\": \"user2\",\r\n  \"email\": \"user2@example.com\",\r\n  \"phone\": \"05111111111\",\r\n  \"username\": \"user2\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"ROLE_LIBRARIAN\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users"
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Users",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:35:12 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"fullName\": \"user user\",\n                \"email\": \"user@example.com\",\n                \"username\": \"user1\",\n                \"role\": \"ROLE_PATRON\",\n                \"active\": true,\n                \"borrowedList\": []\n            },\n            {\n                \"id\": 3,\n                \"fullName\": \"user2 user2\",\n                \"email\": \"user2@example.com\",\n                \"username\": \"user2\",\n                \"role\": \"ROLE_LIBRARIAN\",\n                \"active\": true,\n                \"borrowedList\": []\n            },\n            {\n                \"id\": 2,\n                \"fullName\": \"merve saruhan\",\n                \"email\": \"saruhan@example.com\",\n                \"username\": \"msaruhan\",\n                \"role\": \"ROLE_LIBRARIAN\",\n                \"active\": true,\n                \"borrowedList\": []\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 3,\n        \"totalPages\": 1,\n        \"first\": true,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"numberOfElements\": 3,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:35:12\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Check/Update User Eligibility",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"url": "localhost:8080/api/v1/users/2/status"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": "localhost:8080/api/v1/users/2/status"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:39:16 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 2,\n        \"fullName\": \"merve saruhan\",\n        \"email\": \"saruhan@example.com\",\n        \"username\": \"msaruhan\",\n        \"role\": \"ROLE_LIBRARIAN\",\n        \"active\": true,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:39:16\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "404 Not Found",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": "localhost:8080/api/v1/users/99/status"
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:39:50 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T11:39:50.4052836\",\n        \"message\": \"User not found with id: 99\",\n        \"description\": \"uri=/api/v1/users/99/status\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:39:50\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Update User Role",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"role\": \"ROLE_PATRON\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users/2/role"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"role\": \"ROLE_PATRON\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/2/role"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:42:50 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 2,\n        \"fullName\": \"merve saruhan\",\n        \"email\": \"saruhan@example.com\",\n        \"username\": \"msaruhan\",\n        \"role\": \"ROLE_PATRON\",\n        \"active\": true,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:42:50\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Update User Password",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"currentPassword\": \"123456\",\r\n  \"newPassword\": \"newPassword\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users/2/password"
+							},
+							"response": [
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"currentPassword\": \"1234567\",\r\n  \"newPassword\": \"newPassword\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/2/password"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:45:01 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T11:45:01.7808699\",\n        \"message\": \"Incorrect password.\",\n        \"description\": \"uri=/api/v1/users/2/password\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:45:01\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								},
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"currentPassword\": \"123456\",\r\n  \"newPassword\": \"newPassword\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/2/password"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 08:56:44 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 2,\n        \"fullName\": \"merve saruhan\",\n        \"email\": \"saruhan@example.com\",\n        \"username\": \"msaruhan\",\n        \"role\": \"ROLE_PATRON\",\n        \"active\": true,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 11:56:44\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Eligibility",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api/v1/users/2/eligibility?eligibility=false",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"2",
+										"eligibility"
+									],
+									"query": [
+										{
+											"key": "eligibility",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api/v1/users/2/eligibility?eligibility=false",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"users",
+												"2",
+												"eligibility"
+											],
+											"query": [
+												{
+													"key": "eligibility",
+													"value": "false"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:24:08 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 2,\n        \"fullName\": \"merve saruhan\",\n        \"email\": \"saruhan@example.com\",\n        \"username\": \"msaruhan\",\n        \"role\": \"ROLE_PATRON\",\n        \"active\": false,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:24:08\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": "localhost:8080/api/v1/users/2"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": "localhost:8080/api/v1/users/2"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:25:41 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": null,\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:25:41\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "404 Not found",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": "localhost:8080/api/v1/users/99"
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:26:04 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T12:26:04.6300695\",\n        \"message\": \"User not found with id: 99\",\n        \"description\": \"uri=/api/v1/users/99\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:26:04\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						}
+					],
+					"description": "Endpoints that are accessible to those who are the \"LIBRARIAN\" of the application's role in User endpoints"
+				},
+				{
+					"name": "Patron",
+					"item": [
+						{
+							"name": "Update Pasword",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"currentPassword\": \"user1\",\r\n  \"newPassword\": \"newPassword\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/users/1/password"
+							},
+							"response": [
+								{
+									"name": "200 ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"currentPassword\": \"user1\",\r\n  \"newPassword\": \"newPassword\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/1/password"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:29:23 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"fullName\": \"user user\",\n        \"email\": \"user@example.com\",\n        \"username\": \"user1\",\n        \"role\": \"ROLE_PATRON\",\n        \"active\": true,\n        \"borrowedList\": []\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:29:23\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "400 Bad request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"currentPassword\": \"user1\",\r\n  \"newPassword\": \"user1\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/users/1/password"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:29:56 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T12:29:56.9289384\",\n        \"message\": \"Validation failed\",\n        \"description\": \"uri=/api/v1/users/1/password\",\n        \"errors\": [\n            {\n                \"newPassword\": \"New password must be at least 6 characters long.\"\n            }\n        ]\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:29:56\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						}
+					],
+					"description": "Endpoints that are accessible to those who are the \"PATRON\" of the application's role in User endpoints"
+				}
+			]
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Librarian",
+					"item": [
+						{
+							"name": "Save Book",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books"
+							},
+							"response": [
+								{
+									"name": "201 Created",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books"
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:47:07 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"The Lord of the Rings\",\n        \"author\": \"J.R.R. Tolkien\",\n        \"isbn\": \"97897534259\",\n        \"publishedDate\": \"1954-07-29\",\n        \"publisher\": \"Allen & Unwin\",\n        \"genre\": \"Fantasy\",\n        \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n        \"pageCount\": 1216,\n        \"inventoryCount\": 10,\n        \"available\": true\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:47:07\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 0,\r\n  \"inventoryCount\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:47:25 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T12:47:25.9325907\",\n        \"message\": \"Validation failed\",\n        \"description\": \"uri=/api/v1/books\",\n        \"errors\": [\n            {\n                \"pageCount\": \"Page count must be greater than zero.\"\n            }\n        ]\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:47:25\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								},
+								{
+									"name": "404 Bad Request- ISBN",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"1984\",\r\n  \"author\": \"George Orwell\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1949-06-08\",\r\n  \"publisher\": \"Secker & Warburg\",\r\n  \"genre\": \"Dystopian\",\r\n  \"description\": \"A novel presenting a terrifying vision of a totalitarian future.\",\r\n  \"pageCount\": 328,\r\n  \"inventoryCount\": 12\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:49:32 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T12:49:32.3888572\",\n        \"message\": \"This ISBN number is already associated with a registered book.\",\n        \"description\": \"uri=/api/v1/books\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:49:32\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Get All Books",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books"
+							},
+							"response": [
+								{
+									"name": "200 ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:52:58 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"title\": \"The Lord of the Rings\",\n                \"author\": \"J.R.R. Tolkien\",\n                \"isbn\": \"97897534259\",\n                \"publishedDate\": \"1954-07-29\",\n                \"publisher\": \"Allen & Unwin\",\n                \"genre\": \"Fantasy\",\n                \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n                \"pageCount\": 1216,\n                \"inventoryCount\": 10,\n                \"available\": true\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 1,\n        \"totalPages\": 1,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"first\": true,\n        \"numberOfElements\": 1,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:52:58\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Book By Id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}"
+								},
+								"url": "localhost:8080/api/v1/books/1"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}"
+										},
+										"url": "localhost:8080/api/v1/books/1"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:53:58 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"The Lord of the Rings\",\n        \"author\": \"J.R.R. Tolkien\",\n        \"isbn\": \"97897534259\",\n        \"publishedDate\": \"1954-07-29\",\n        \"publisher\": \"Allen & Unwin\",\n        \"genre\": \"Fantasy\",\n        \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n        \"pageCount\": 1216,\n        \"inventoryCount\": 10,\n        \"available\": true\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:53:58\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Available Books",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books/availability"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}"
+										},
+										"url": "localhost:8080/api/v1/books/availability"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:55:39 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"title\": \"The Lord of the Rings\",\n                \"author\": \"J.R.R. Tolkien\",\n                \"isbn\": \"97897534259\",\n                \"publishedDate\": \"1954-07-29\",\n                \"publisher\": \"Allen & Unwin\",\n                \"genre\": \"Fantasy\",\n                \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n                \"pageCount\": 1216,\n                \"inventoryCount\": 10,\n                \"available\": true\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 1,\n        \"totalPages\": 1,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"first\": true,\n        \"numberOfElements\": 1,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:55:39\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Book By keyword",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api/v1/books/search/filter?keyword=Tolkien&field=AUTHOR",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"books",
+										"search",
+										"filter"
+									],
+									"query": [
+										{
+											"key": "keyword",
+											"value": "Tolkien"
+										},
+										{
+											"key": "field",
+											"value": "AUTHOR"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api/v1/books/search/filter?keyword=Tolkien&field=AUTHOR",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"books",
+												"search",
+												"filter"
+											],
+											"query": [
+												{
+													"key": "keyword",
+													"value": "Tolkien"
+												},
+												{
+													"key": "field",
+													"value": "AUTHOR"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 10:02:36 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"title\": \"The Lord of the Rings\",\n                \"author\": \"J.R.R. Tolkien\",\n                \"isbn\": \"97897534259\",\n                \"publishedDate\": \"1954-07-29\",\n                \"publisher\": \"Allen & Unwin\",\n                \"genre\": \"Fantasy\",\n                \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n                \"pageCount\": 1216,\n                \"inventoryCount\": 10,\n                \"available\": true\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 1,\n        \"totalPages\": 1,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"first\": true,\n        \"numberOfElements\": 1,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 13:02:36\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "400 Bad request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api/v1/books/search/filter?keyword=Tolkien&field=TITLE",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"books",
+												"search",
+												"filter"
+											],
+											"query": [
+												{
+													"key": "keyword",
+													"value": "Tolkien"
+												},
+												{
+													"key": "field",
+													"value": "TITLE"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 10:03:33 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T13:03:33.7953175\",\n        \"message\": \"No books found for the given keyword: Tolkien\",\n        \"description\": \"uri=/api/v1/books/search/filter\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 13:03:33\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Book",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books/1"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 20\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books/1"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 10:15:53 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"The Lord of the Rings\",\n        \"author\": \"J.R.R. Tolkien\",\n        \"isbn\": \"97897534259\",\n        \"publishedDate\": \"1954-07-29\",\n        \"publisher\": \"Allen & Unwin\",\n        \"genre\": \"Fantasy\",\n        \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n        \"pageCount\": 1216,\n        \"inventoryCount\": 20,\n        \"available\": true\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 13:15:53\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Book Inventory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books/1/inventoryCount/25"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books/1/inventoryCount/25"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 10:18:37 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"The Lord of the Rings\",\n        \"author\": \"J.R.R. Tolkien\",\n        \"isbn\": \"97897534259\",\n        \"publishedDate\": \"1954-07-29\",\n        \"publisher\": \"Allen & Unwin\",\n        \"genre\": \"Fantasy\",\n        \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n        \"pageCount\": 1216,\n        \"inventoryCount\": 25,\n        \"available\": true\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 13:18:37\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						}
+					],
+					"description": "Endpoints that are accessible to those who are the \"LIBRARIAN\" of the application's role in Book endpoints"
+				},
+				{
+					"name": "Patron",
+					"item": [
+						{
+							"name": "Get Book By Id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}"
+								},
+								"url": "localhost:8080/api/v1/books/1"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}"
+										},
+										"url": "localhost:8080/api/v1/books/1"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:53:58 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"The Lord of the Rings\",\n        \"author\": \"J.R.R. Tolkien\",\n        \"isbn\": \"97897534259\",\n        \"publishedDate\": \"1954-07-29\",\n        \"publisher\": \"Allen & Unwin\",\n        \"genre\": \"Fantasy\",\n        \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n        \"pageCount\": 1216,\n        \"inventoryCount\": 10,\n        \"available\": true\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:53:58\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get All Books",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books"
+							},
+							"response": [
+								{
+									"name": "200 ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/books"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:52:58 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"title\": \"The Lord of the Rings\",\n                \"author\": \"J.R.R. Tolkien\",\n                \"isbn\": \"97897534259\",\n                \"publishedDate\": \"1954-07-29\",\n                \"publisher\": \"Allen & Unwin\",\n                \"genre\": \"Fantasy\",\n                \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n                \"pageCount\": 1216,\n                \"inventoryCount\": 10,\n                \"available\": true\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 1,\n        \"totalPages\": 1,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"first\": true,\n        \"numberOfElements\": 1,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:52:58\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Available Books",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/books/availability"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}"
+										},
+										"url": "localhost:8080/api/v1/books/availability"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 09:55:39 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"title\": \"The Lord of the Rings\",\n                \"author\": \"J.R.R. Tolkien\",\n                \"isbn\": \"97897534259\",\n                \"publishedDate\": \"1954-07-29\",\n                \"publisher\": \"Allen & Unwin\",\n                \"genre\": \"Fantasy\",\n                \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n                \"pageCount\": 1216,\n                \"inventoryCount\": 10,\n                \"available\": true\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 1,\n        \"totalPages\": 1,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"first\": true,\n        \"numberOfElements\": 1,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 12:55:39\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Book By keyword",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api/v1/books/search/filter?keyword=Tolkien&field=AUTHOR",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"books",
+										"search",
+										"filter"
+									],
+									"query": [
+										{
+											"key": "keyword",
+											"value": "Tolkien"
+										},
+										{
+											"key": "field",
+											"value": "AUTHOR"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api/v1/books/search/filter?keyword=Tolkien&field=AUTHOR",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"books",
+												"search",
+												"filter"
+											],
+											"query": [
+												{
+													"key": "keyword",
+													"value": "Tolkien"
+												},
+												{
+													"key": "field",
+													"value": "AUTHOR"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 10:02:36 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"content\": [\n            {\n                \"id\": 1,\n                \"title\": \"The Lord of the Rings\",\n                \"author\": \"J.R.R. Tolkien\",\n                \"isbn\": \"97897534259\",\n                \"publishedDate\": \"1954-07-29\",\n                \"publisher\": \"Allen & Unwin\",\n                \"genre\": \"Fantasy\",\n                \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\n                \"pageCount\": 1216,\n                \"inventoryCount\": 10,\n                \"available\": true\n            }\n        ],\n        \"pageable\": {\n            \"pageNumber\": 0,\n            \"pageSize\": 20,\n            \"sort\": {\n                \"empty\": true,\n                \"sorted\": false,\n                \"unsorted\": true\n            },\n            \"offset\": 0,\n            \"paged\": true,\n            \"unpaged\": false\n        },\n        \"last\": true,\n        \"totalElements\": 1,\n        \"totalPages\": 1,\n        \"size\": 20,\n        \"number\": 0,\n        \"sort\": {\n            \"empty\": true,\n            \"sorted\": false,\n            \"unsorted\": true\n        },\n        \"first\": true,\n        \"numberOfElements\": 1,\n        \"empty\": false\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 13:02:36\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "400 Bad request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"The Lord of the Rings\",\r\n  \"author\": \"J.R.R. Tolkien\",\r\n  \"isbn\": \"97897534259\",\r\n  \"publishedDate\": \"1954-07-29\",\r\n  \"publisher\": \"Allen & Unwin\",\r\n  \"genre\": \"Fantasy\",\r\n  \"description\": \"An epic high-fantasy novel set in Middle-earth.\",\r\n  \"pageCount\": 1216,\r\n  \"inventoryCount\": 10\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api/v1/books/search/filter?keyword=Tolkien&field=TITLE",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"books",
+												"search",
+												"filter"
+											],
+											"query": [
+												{
+													"key": "keyword",
+													"value": "Tolkien"
+												},
+												{
+													"key": "field",
+													"value": "TITLE"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 10:03:33 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T13:03:33.7953175\",\n        \"message\": \"No books found for the given keyword: Tolkien\",\n        \"description\": \"uri=/api/v1/books/search/filter\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 13:03:33\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						}
+					],
+					"description": "Endpoints that are accessible to those who are the \"PATRON\" of the application's role in Book endpoints"
+				}
+			]
+		},
+		{
+			"name": "Borrowings",
+			"item": [
+				{
+					"name": "Librarian",
+					"item": [
+						{
+							"name": "Get All Borrowing History",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": "localhost:8080/api/v1/borrowings/history/all"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "localhost:8080/api/v1/borrowings/history/all"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:21:08 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-10\",\n            \"dueDate\": \"2025-05-24\",\n            \"returnDate\": null,\n            \"status\": \"BORROWED\"\n        }\n    ],\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:21:08\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Due Date",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/v1/borrowings/updateDueDate/1?dueDate=2025-05-10",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"borrowings",
+										"updateDueDate",
+										"1"
+									],
+									"query": [
+										{
+											"key": "dueDate",
+											"value": "2025-05-10"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/api/v1/borrowings/updateDueDate/1?dueDate=2025-05-11",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"borrowings",
+												"updateDueDate",
+												"1"
+											],
+											"query": [
+												{
+													"key": "dueDate",
+													"value": "2025-05-11"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:29:35 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"userFullName\": \"user user\",\n        \"userId\": 1,\n        \"bookTitle\": \"The Lord of the Rings\",\n        \"bookId\": 1,\n        \"borrowDate\": \"2025-05-10\",\n        \"dueDate\": \"2025-05-11\",\n        \"returnDate\": null,\n        \"status\": \"BORROWED\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:29:35\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/api/v1/borrowings/updateDueDate/1?dueDate=2025-05-9",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"borrowings",
+												"updateDueDate",
+												"1"
+											],
+											"query": [
+												{
+													"key": "dueDate",
+													"value": "2025-05-9"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/problem+json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:32:07 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"about:blank\",\n    \"title\": \"Bad Request\",\n    \"status\": 400,\n    \"detail\": \"Failed to convert 'dueDate' with value: '2025-05-9'\",\n    \"instance\": \"/api/v1/borrowings/updateDueDate/1\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get All Over Due",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": "localhost:8080/api/v1/borrowings/overdue"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "localhost:8080/api/v1/borrowings/overdue"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 12:18:33 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"id\": 4,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-05\",\n            \"dueDate\": \"2025-05-09\",\n            \"returnDate\": null,\n            \"status\": \"OVERDUE\"\n        }\n    ],\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 15:18:33\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Borrowings By Status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/api/v1/borrowings/OVERDUE",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"borrowings",
+										"OVERDUE"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "RETURNED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/api/v1/borrowings/RETURNED",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"borrowings",
+												"RETURNED"
+											],
+											"query": [
+												{
+													"key": "status",
+													"value": "RETURNED",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 12:21:32 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-10\",\n            \"dueDate\": \"2025-05-10\",\n            \"returnDate\": \"2025-05-10\",\n            \"status\": \"RETURNED\"\n        },\n        {\n            \"id\": 2,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-10\",\n            \"dueDate\": \"2025-05-24\",\n            \"returnDate\": \"2025-05-10\",\n            \"status\": \"RETURNED\"\n        },\n        {\n            \"id\": 3,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-10\",\n            \"dueDate\": \"2025-05-24\",\n            \"returnDate\": \"2025-05-10\",\n            \"status\": \"RETURNED\"\n        }\n    ],\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 15:21:32\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/api/v1/borrowings/OVERDUE",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"v1",
+												"borrowings",
+												"OVERDUE"
+											],
+											"query": [
+												{
+													"key": "status",
+													"value": "RETURNED",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 12:21:56 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"id\": 4,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-05\",\n            \"dueDate\": \"2025-05-09\",\n            \"returnDate\": null,\n            \"status\": \"OVERDUE\"\n        }\n    ],\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 15:21:56\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Over Due Report",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_librarian}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": "localhost:8080/api/v1/borrowings/overdue/report"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "localhost:8080/api/v1/borrowings/overdue/report"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 12:42:44 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": \"📚 LIBRARY OVERDUE REPORT\\n--------------------------\\nTotal Books        : 1\\nCurrently Borrowed : 0\\nReturned           : 3\\nOverdue            : 1\\n\\n\\n Overdue Book Details:\\n - Book: The Lord of the Rings [Book ID: 1] | Borrowed by: user user [User ID: 1] | Due: 2025-05-09\\n\\nReport generated at: 2025-05-10 15:42:44\",\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 15:42:44\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						}
+					],
+					"description": "Endpoints that are accessible to those who are the \"LIBRARIAN\" of the application's role in Borrowing endpoints"
+				},
+				{
+					"name": "Patron",
+					"item": [
+						{
+							"name": "Return Operation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"url": "localhost:8080/api/v1/borrowings/1"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": "localhost:8080/api/v1/borrowings/1"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:39:16 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"userFullName\": \"user user\",\n        \"userId\": 1,\n        \"bookTitle\": \"The Lord of the Rings\",\n        \"bookId\": 1,\n        \"borrowDate\": \"2025-05-10\",\n        \"dueDate\": \"2025-05-10\",\n        \"returnDate\": \"2025-05-10\",\n        \"status\": \"RETURNED\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:39:16\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								},
+								{
+									"name": "409 Conflict",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"url": "localhost:8080/api/v1/borrowings/1"
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:51:57 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"timestamp\": \"2025-05-10T14:51:57.8375245\",\n        \"message\": \"This book has already been returned.\",\n        \"description\": \"uri=/api/v1/borrowings/1\",\n        \"errors\": null\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:51:57\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": false\n}"
+								}
+							]
+						},
+						{
+							"name": "Get My Borrowing History",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_userFromDb}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": "localhost:8080/api/v1/borrowings/history/my"
+							},
+							"response": [
+								{
+									"name": "200 Ok",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "localhost:8080/api/v1/borrowings/history/my"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:50:33 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"userFullName\": \"user user\",\n            \"userId\": 1,\n            \"bookTitle\": \"The Lord of the Rings\",\n            \"bookId\": 1,\n            \"borrowDate\": \"2025-05-10\",\n            \"dueDate\": \"2025-05-10\",\n            \"returnDate\": \"2025-05-10\",\n            \"status\": \"RETURNED\"\n        }\n    ],\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:50:33\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						},
+						{
+							"name": "Borrowing",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token_patron}}"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": 1,\r\n  \"bookId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8080/api/v1/borrowings"
+							},
+							"response": [
+								{
+									"name": "201 Created",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"userId\": 1,\r\n  \"bookId\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "localhost:8080/api/v1/borrowings"
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 10 May 2025 11:54:53 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": {\n        \"id\": 4,\n        \"userFullName\": \"user user\",\n        \"userId\": 1,\n        \"bookTitle\": \"The Lord of the Rings\",\n        \"bookId\": 1,\n        \"borrowDate\": \"2025-05-10\",\n        \"dueDate\": \"2025-05-24\",\n        \"returnDate\": null,\n        \"status\": \"BORROWED\"\n    },\n    \"message\": null,\n    \"responseTime\": \"2025-05-10 14:54:53\",\n    \"errorMessage\": null,\n    \"httpStatus\": null,\n    \"success\": true\n}"
+								}
+							]
+						}
+					],
+					"description": "Endpoints that are accessible to those who are the \"PATRON\" of the application's role in Borrowing endpoints"
+				}
+			]
+		},
+		{
+			"name": "WebFlux",
+			"item": [
+				{
+					"name": "Book Availability- Patron",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{jwt_token_patron}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "localhost:8080/api/v1/booksAvailability"
+					},
+					"response": [
+						{
+							"name": "200 Ok",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": "localhost:8080/api/v1/booksAvailability"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/event-stream"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 10 May 2025 12:54:01 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "data:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\n"
+						}
+					]
+				},
+				{
+					"name": "Book Availability- Librarian",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{jwt_token_librarian}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "localhost:8080/api/v1/booksAvailability"
+					},
+					"response": [
+						{
+							"name": "200 Ok",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": "localhost:8080/api/v1/booksAvailability"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/event-stream"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 10 May 2025 12:54:01 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "data:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":10}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\ndata:[{\"id\":1,\"title\":\"The Lord of the Rings\",\"inventoryCount\":24},{\"id\":2,\"title\":\"The Lord of the Rings2\",\"inventoryCount\":9}]\n\n"
+						}
+					]
+				}
+			],
+			"description": "Book availability information is updated in real time using Spring WebFlux."
+		}
+	]
+}
