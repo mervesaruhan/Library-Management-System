@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.model.exception;
+package com.mervesaruhan.librarymanagementsystem.exception;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

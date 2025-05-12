@@ -1,7 +1,7 @@
-package com.mervesaruhan.librarymanagementsystem.model.exception;
+package com.mervesaruhan.librarymanagementsystem.exception;
 
-import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidBookIdException;
-import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
+import com.mervesaruhan.librarymanagementsystem.exception.customizedException.InvalidBookIdException;
+import com.mervesaruhan.librarymanagementsystem.exception.customizedException.InvalidUserIdException;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;
 import jakarta.persistence.EntityNotFoundException;

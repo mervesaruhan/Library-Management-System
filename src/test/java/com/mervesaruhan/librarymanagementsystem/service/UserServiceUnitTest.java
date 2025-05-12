@@ -9,7 +9,7 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserRole
 import com.mervesaruhan.librarymanagementsystem.model.dto.updateRequest.UserUpdateRequestDto;
 import com.mervesaruhan.librarymanagementsystem.model.entity.Borrowing;
 import com.mervesaruhan.librarymanagementsystem.model.entity.User;
-import com.mervesaruhan.librarymanagementsystem.model.exception.customizedException.InvalidUserIdException;
+import com.mervesaruhan.librarymanagementsystem.exception.customizedException.InvalidUserIdException;
 import com.mervesaruhan.librarymanagementsystem.model.mapper.UserMapper;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
 import com.mervesaruhan.librarymanagementsystem.util.LogHelper;

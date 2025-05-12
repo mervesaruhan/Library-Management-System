@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.model.exception;
+package com.mervesaruhan.librarymanagementsystem.exception;
 
 public enum ErrorMessage implements BaseErrorMessage {
     USER_NOT_FOUND("User not found."),

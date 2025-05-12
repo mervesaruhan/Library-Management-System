@@ -6,8 +6,8 @@ import com.mervesaruhan.librarymanagementsystem.model.dto.saveRequest.RegisterRe
 import com.mervesaruhan.librarymanagementsystem.model.entity.User;
 import com.mervesaruhan.librarymanagementsystem.model.enums.RoleEnum;
 import com.mervesaruhan.librarymanagementsystem.repository.UserRepository;
-import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
 import com.mervesaruhan.librarymanagementsystem.security.CustomUserDetailsService;
+import com.mervesaruhan.librarymanagementsystem.security.JwtUtil;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

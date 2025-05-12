@@ -2,7 +2,7 @@ package com.mervesaruhan.librarymanagementsystem.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mervesaruhan.librarymanagementsystem.restResponse.RestResponse;
-import com.mervesaruhan.librarymanagementsystem.model.exception.GeneralErrorMessage;
+import com.mervesaruhan.librarymanagementsystem.exception.GeneralErrorMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

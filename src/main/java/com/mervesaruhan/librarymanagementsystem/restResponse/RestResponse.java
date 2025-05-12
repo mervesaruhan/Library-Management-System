@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.mervesaruhan.librarymanagementsystem.model.exception.ErrorMessage;
-import com.mervesaruhan.librarymanagementsystem.model.exception.BaseErrorMessage;
+import com.mervesaruhan.librarymanagementsystem.exception.BaseErrorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +36,7 @@ public class RestResponse <T> {
         this.responseTime = LocalDateTime.now();
     }
 
-    // constructor for error case
+
     public RestResponse(BaseErrorMessage errorMessage, HttpStatus httpStatus) {
         this.isSuccess = false;
         this.errorMessage = errorMessage;
@@ -50,12 +49,6 @@ public class RestResponse <T> {
     public static <T> RestResponse<T> errorAuth(BaseErrorMessage message, HttpStatus status){
         return new RestResponse<T>(message, status);
     }
-
-//    public static <T> RestResponse<T> error(T t,String message) {
-//        RestResponse<T> response = new RestResponse<>(t, false);
-//        response.setMessage(message);
-//        return response;
-//    }
 
     public static <T> RestResponse<T> error(T t){
         return new RestResponse<>(t, false);

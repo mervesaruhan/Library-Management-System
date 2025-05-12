@@ -1,7 +1,7 @@
-package com.mervesaruhan.librarymanagementsystem.model.exception.customizedException;
+package com.mervesaruhan.librarymanagementsystem.exception.customizedException;
 
-import com.mervesaruhan.librarymanagementsystem.model.exception.BusinessException;
-import com.mervesaruhan.librarymanagementsystem.model.exception.ErrorMessage;
+import com.mervesaruhan.librarymanagementsystem.exception.BusinessException;
+import com.mervesaruhan.librarymanagementsystem.exception.ErrorMessage;
 
 
 public class InvalidUserIdException extends BusinessException {

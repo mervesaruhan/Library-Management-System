@@ -1,4 +1,4 @@
-package com.mervesaruhan.librarymanagementsystem.model.exception;
+package com.mervesaruhan.librarymanagementsystem.exception;
 
 import java.io.Serializable;
 
