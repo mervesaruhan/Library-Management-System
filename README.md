@@ -1,8 +1,8 @@
-![flow chart](https://github.com/user-attachments/assets/93ba83e1-4eac-42b2-8fa3-7117eb19a615)
-# 📚 Library Management System
+
+#  Library Management System
 
 ## 🔖 Project Overview & Features
-This is a comprehensive **Library Management System** developed using Java 21 and Spring Boot 3.1.5. The system supports user registration/login, book search, borrowing/returning, overdue tracking, JWT authentication, role-based access control, Kafka logging, reactive tracking with WebFlux, and Docker deployment.
+This is a comprehensive **Library Management System** developed using Java 21 and Spring Boot 3.4.5. The system supports user registration/login, book search, borrowing/returning, overdue tracking, JWT authentication, role-based access control, Kafka logging, reactive tracking with WebFlux, and Docker deployment.
 
 ---
 
@@ -58,7 +58,7 @@ docker-compose up --build
 
 ---
 
-## 🧩 Key Features
+##  Key Features
 
 ### 👥 Authentication & Role-Based Authorization
 - Login with JWT token
@@ -73,7 +73,7 @@ docker-compose up --build
 
 ---
 
-### 📚 Book Management (LIBRARIAN)
+### 📚 Book Management 
 - Add, update, delete books
 - Search/filter by title, author, genre, or ISBN
 - Pagination and sorting support
@@ -97,7 +97,7 @@ docker-compose up --build
 
 ### 🧪 Testing
 - Unit tests for BookService, UserService, BorrowingService
-- Integration tests for controller layer with DB & JWT
+- Integration tests for controller layer with H2 Database
 - Role-based security tests
 
 **Integration Test Coverage:**
@@ -115,12 +115,14 @@ docker-compose up --build
 - Global exception handling via `@ControllerAdvice`
 - Standardized responses using `RestResponse<T>`
 - Enum-based error messaging with `GeneralErrorMessage`, `ErrorMessage`
+- domain specific exception classes
 
 ---
 
 ### 📦 Kafka Logging Integration
-- Logs generated via `LogHelper` (INFO, ERROR, WARN)
+- Logs generated via `LogHelper` (INFO, ERROR, WARN,DEBUG )
 - Logs sent to `request-log` and `error-log` topics when Kafka is enabled
+- Listening to requests with interceptor
 - Fallback to console logging if Kafka is not used
 - To enable Kafka via Docker, set `logger.kafka.enabled=true` in `application.properties`; set to `false` when running locally without Kafka
 
