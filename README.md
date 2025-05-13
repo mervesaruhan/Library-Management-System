@@ -52,6 +52,7 @@ cd Library-Management-System
 docker-compose up --build
 ```
 > PostgreSQL, Kafka, and the application will be launched in containers.
+> If Kafka is to be run with Docker, make sure to set `app.kafka.enabled=true` in the `application.properties` file.
 ![docker](https://github.com/user-attachments/assets/afff6fba-aeb3-46ad-abce-d90ea74d5e7f)
 
 
