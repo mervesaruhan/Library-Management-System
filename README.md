@@ -1,18 +1,18 @@
 
 #  Library Management System
 
-## 🔖 Project Overview & Features
+##  Project Overview & Features
 This is a comprehensive **Library Management System** developed using Java 21 and Spring Boot 3.4.5. The system supports user registration/login, book search, borrowing/returning, overdue tracking, JWT authentication, role-based access control, Kafka logging, reactive tracking with WebFlux, and Docker deployment.
 
 ---
 
-## 🔁 System Flow Diagram
+##  System Flow Diagram
 
 ![flow chart](https://github.com/user-attachments/assets/6b1b89a4-982a-4c4a-987f-ca63499d7c86)
 
 ---
 
-## ⚙️ Technology Stack
+##  Technology Stack
 | Technology            | Description                             |
 |-----------------------|------------------------------------------|
 | Java 21               | Backend language                         |
@@ -29,7 +29,7 @@ This is a comprehensive **Library Management System** developed using Java 21 an
 
 ---
 
-## 🚀 Running the Application Locally
+##  Running the Application Locally
 1. Navigate to the project directory:
 ```bash
 cd Library-Management-System
@@ -47,7 +47,7 @@ cd Library-Management-System
 
 ---
 
-## 🐳 Docker Setup
+##  Docker Setup
 ```bash
 docker-compose up --build
 ```
@@ -61,7 +61,7 @@ docker-compose up --build
 
 ##  Key Features
 
-### 👥 Authentication & Role-Based Authorization
+###  Authentication & Role-Based Authorization
 - Login with JWT token
 - Sample users:
   - `username: librarian`, `password: password123` → LIBRARIAN role
@@ -74,7 +74,7 @@ docker-compose up --build
 
 ---
 
-### 📚 Book Management 
+###  Book Management 
 - Add, update, delete books
 - Search/filter by title, author, genre, or ISBN
 - Pagination and sorting support
@@ -84,7 +84,7 @@ docker-compose up --build
 
 ---
 
-### 🔄 Borrowing & Returning Flow
+###  Borrowing & Returning Flow
 - Patrons can borrow/return books
 - Overdue detection with `@Scheduled` job
 - Books automatically marked as `OVERDUE`
@@ -96,10 +96,11 @@ docker-compose up --build
 
 ---
 
-### 🧪 Testing
+###  Testing
 - Unit tests for BookService, UserService, BorrowingService
 - Integration tests for controller layer with H2 Database
 - Role-based security tests
+-  For integration tests, make sure to activate the test profile (e.g., by setting spring.profiles.active=test).
 
 **Integration Test Coverage:**
 
@@ -112,7 +113,7 @@ docker-compose up --build
 
 ---
 
-### 📜 Exception Handling & Response Wrapper
+###  Exception Handling & Response Wrapper
 - Global exception handling via `@ControllerAdvice`
 - Standardized responses using `RestResponse<T>`
 - Enum-based error messaging with `GeneralErrorMessage`, `ErrorMessage`
@@ -120,7 +121,7 @@ docker-compose up --build
 
 ---
 
-### 📦 Kafka Logging Integration
+###  Kafka Logging Integration
 - Logs generated via `LogHelper` (INFO, ERROR, WARN,DEBUG )
 - Logs sent to `request-log` and `error-log` topics when Kafka is enabled
 - Listening to requests with interceptor
@@ -129,7 +130,7 @@ docker-compose up --build
 
 ---
 
-## 🔗 Swagger Documentation
+##  Swagger Documentation
 http://localhost:8080/swagger-ui/index.html
 
 ![swagger end points-1](https://github.com/user-attachments/assets/e7640754-e2a0-4aeb-944d-065d1ea9ff71)
@@ -138,7 +139,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## 📮 Postman Collection
+##  Postman Collection
 - All endpoints grouped by function (Auth, Book, Borrowing, User)
 - Sample requests with JWT tokens
 - File path: `postman/LibraryManagementSystem.postman_collection.json`
@@ -146,7 +147,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## 🗃️ Database Schema
+##  Database Schema
 ![ER Diagram](https://github.com/user-attachments/assets/43b542cd-89e2-40c7-aa92-f021d9160964)
 
 
@@ -154,7 +155,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## 🧠 Development Notes
+##  Development Notes
 - Adheres to Clean Code, SOLID, and Testable Architecture principles
 - Version-controlled using Git throughout development
 
