@@ -80,8 +80,9 @@ class BorrowingIntegrationTest {
                 .andReturn();
 
         String responseContent = mvcResult.getResponse().getContentAsString();
-        assertTrue(responseContent.contains("\"success\":true")); // daha sağlam kontrol
+        assertTrue(responseContent.contains("\"success\":true"));
     }
+
 
 
     @Test
@@ -97,6 +98,7 @@ class BorrowingIntegrationTest {
         boolean success = isSuccess(mvcResult);
         assertTrue(success);
     }
+
 
     @Test
     @WithMockUser(roles = "PATRON")
@@ -203,4 +205,6 @@ class BorrowingIntegrationTest {
         JsonNode root = objectMapper.readTree(responseContent);
         return root.path("data").path("id").asLong();
     }
+
+
 }

@@ -107,6 +107,7 @@ class UserIntegrationTest {
         assertTrue(success);
     }
 
+
     @Test
     @WithMockUser(roles = "LIBRARIAN")
     @Order(5)
@@ -123,6 +124,7 @@ class UserIntegrationTest {
         boolean success = isSuccess(mvcResult);
         assertTrue(success);
     }
+
 
     @Test
     @WithMockUser(roles = "LIBRARIAN")
@@ -174,4 +176,6 @@ class UserIntegrationTest {
         RestResponse<?> response = objectMapper.readValue(responseContent, RestResponse.class);
         return response.isSuccess();
     }
+
+
 }
